@@ -147,33 +147,12 @@ extension Bundle {
     }
 }
 
-
-// Our custom view modifier to track rotation and
-// call our action
-struct DeviceRotationViewModifier: ViewModifier {
-    let action: (Bool) -> Void
-
-    public func body(content: Content) -> some View {
-        content
-//            .onAppear()
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                guard let scene = UIApplication.shared.currentScene else { return }
-                let isPortrait = scene.interfaceOrientation.isPortrait
-                action(isPortrait)
-            }
-    }
+public func bundleID() -> String {
+    Bundle.main.bundleIdentifier!
 }
 
-// A View wrapper to make the modifier easier to use
-extension View {
-    public func onRotate(perform action: @escaping (Bool) -> Void) -> some View {
-        self.modifier(DeviceRotationViewModifier(action: action))
-    }
-}
-
-extension UIApplication {
-    var currentScene: UIWindowScene? {
-        connectedScenes
-            .first { $0.activationState == .foregroundActive } as? UIWindowScene
+public extension String {
+    var prefKey: String {
+        bundleID() + "." + self
     }
 }

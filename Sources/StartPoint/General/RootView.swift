@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 public struct RootView<Content: View> : View {
-  @EnvironmentObject private var store: BaseStore
   var content: Content
   
   public init(@ViewBuilder content: ()-> Content) {
@@ -19,8 +18,8 @@ public struct RootView<Content: View> : View {
   public var body:some View {
     EmptyView()
       .withHostingWindow { window in
-        window!.rootViewController = RootHostingController(rootView: innerRootView)
         BaseStore.shared.rootWindow = window
+        window!.rootViewController = RootHostingController(rootView: innerRootView)
       }
   }
   
@@ -28,13 +27,19 @@ public struct RootView<Content: View> : View {
   var innerRootView: some View {
     ZStack {
       content
+        .onAppear {
+          BaseStore.shared.deviceState.isPortrait = OritentionMode.isPortraitFromInit
+        }
         .background {
           GeometryReader { geo in
             Color.clear
               .onRotate { isPortrait in
                 runInMain {
-                  store.safeArea = geo.safeAreaInsets
-                  log("------ SafeArea: \(store.safeArea) , isPortrait: \(isPortrait)")
+                  withAnimation {
+                    BaseStore.shared.deviceState.isPortrait = isPortrait
+                  }
+                  BaseStore.shared.safeArea = geo.safeAreaInsets
+                  log("------ SafeArea: \(BaseStore.shared.safeArea) , isPortrait: \(isPortrait)")
                 }
               }
           }

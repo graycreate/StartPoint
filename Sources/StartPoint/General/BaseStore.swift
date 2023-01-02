@@ -14,6 +14,7 @@ open class BaseStore: ObservableObject {
     shared
   }
   @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
+  @Published public var deviceState: DeviceState = DeviceState()
   
   /// Root UI elements
   public var rootViewController: UIViewController? {
