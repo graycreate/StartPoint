@@ -5,6 +5,11 @@ import PackageDescription
 
 let package = Package(
     name: "StartPoint",
+    platforms: [
+        .iOS(.v15),
+//        .macCatalyst(.v13),
+//        .macOS(.v10_15)
+    ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
