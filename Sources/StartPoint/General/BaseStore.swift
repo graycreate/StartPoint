@@ -9,11 +9,15 @@ import Foundation
 import SwiftUI
 
 open class BaseStore: ObservableObject {
-  
   public static var shared: BaseStore = BaseStore()
   public static var sample: BaseStore {
     shared
   }
   @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
   
+  /// Root UI elements
+  public var rootViewController: UIViewController? {
+    return rootWindow?.rootViewController
+  }
+  public var rootWindow: UIWindow?
 }
