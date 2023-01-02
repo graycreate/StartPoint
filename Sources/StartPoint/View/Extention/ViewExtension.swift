@@ -114,7 +114,7 @@ struct KeyboardResponsiveModifier: ViewModifier {
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notif in
           let value = notif.userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
           let height = value.height
-          let bottomInset = UIDevice.topSafeAreaInset().bottom
+          let bottomInset = UIDevice.safeArea.bottom
           withAnimation {
             self.offset = height - (bottomInset)
           }
@@ -323,7 +323,7 @@ struct HostingWindowFinder: UIViewRepresentable {
 
 
 public extension View {
-  public func foregroundLinearGradient(
+  func foregroundLinearGradient(
     colors: [Color],
     startPoint: UnitPoint,
     endPoint: UnitPoint) -> some View
@@ -344,8 +344,8 @@ public extension View {
 }
 
 public extension View {
-  func injectSample() -> some View {
-    return self.environmentObject(StartpointStore.sample)
+  func injectSample(_ store: BaseStore = .sample) -> some View {
+    return self.environmentObject(store)
   }
 }
 

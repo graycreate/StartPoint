@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-struct BackView: View {
+public struct BackView: View {
   @Environment(\.dismiss) var dismiss
   var onBackPressed: (()->Void)?
   
-  init(onBackPressed: ( () -> Void)? = nil) {
+  public init(onBackPressed: ( () -> Void)? = nil) {
     self.onBackPressed = onBackPressed
   }
   
-  var body: some View {
+  public var body: some View {
     Button {
       onBackPressed?()
       dismiss()

@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct NavBar<LeftView, CenterView, RightView>: View where LeftView: View, CenterView: View, RightView: View {
+public struct NavBar<LeftView, CenterView, RightView>: View where LeftView: View, CenterView: View, RightView: View {
   
   let leftView: LeftView?
   let centerView: CenterView
   let rightView: RightView?
   
-  init(@ViewBuilder leftView: () -> LeftView = { EmptyView() } ,
-       @ViewBuilder centerView: () -> CenterView = { Text("Title")},
-       @ViewBuilder rightView: () -> RightView = { EmptyView() }) {
+  public init(@ViewBuilder leftView: () -> LeftView = { EmptyView() } ,
+              @ViewBuilder centerView: () -> CenterView = { Text("Title")},
+              @ViewBuilder rightView: () -> RightView = { EmptyView() }) {
     self.leftView = leftView()
     self.centerView = centerView()
     self.rightView = rightView()
   }
   
-  var body: some View {
+  public var body: some View {
     NavbarView {
       ZStack {
         HStack(alignment: .center, spacing: 4) {
@@ -37,19 +37,19 @@ struct NavBar<LeftView, CenterView, RightView>: View where LeftView: View, Cente
   }
 }
 
-struct NavbarView<Content: View>: View {
-  @EnvironmentObject private var store: StartpointStore
+public struct NavbarView<Content: View>: View {
+  @EnvironmentObject private var store: BaseStore
   let content: Content
   let paddingH: CGFloat
   let hideDivider: Bool
   
-  init(paddingH: CGFloat = 12, hideDivider: Bool = true, @ViewBuilder content: () -> Content) {
+  public init(paddingH: CGFloat = 12, hideDivider: Bool = true, @ViewBuilder content: () -> Content) {
     self.content = content()
     self.paddingH = paddingH
     self.hideDivider = hideDivider
   }
   
-  var body: some View {
+  public var body: some View {
     VStack(spacing: 0) {
       Color.clear.frame(height: store.safeArea.top)
       HStack(alignment: .center, spacing: 0) {
@@ -75,7 +75,7 @@ struct NavBar_Previews: PreviewProvider {
     NavBar {
       BackView()
     } centerView: {
-      Text("RememDays")
+      Text("NavBar")
         .font(.title)
         .padding(.vertical, 20)
     } rightView: {

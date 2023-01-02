@@ -202,7 +202,7 @@ public extension UIDevice {
     return DeviceModel.unrecognized
   }
   
-  public static func topSafeAreaInset() -> UIEdgeInsets {
+  public static var safeArea: UIEdgeInsets {
     var result: UIEdgeInsets
     let isIPhoneMini = UIDevice().model == .iPhone12Mini
     let defaultInsetTop = isIPhoneMini ? 50.0 : 47.0

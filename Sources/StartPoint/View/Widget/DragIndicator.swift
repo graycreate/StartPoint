@@ -7,9 +7,14 @@
 
 import SwiftUI
 
-struct DragIndicator: View {
+public struct DragIndicator: View {
   var progress: CGFloat = 0.0
   var length: CGFloat = 40
+  
+  public init(progress: CGFloat = 0.0, length: CGFloat = 40) {
+    self.progress = progress
+    self.length = length
+  }
   
   var height: CGFloat {
     length / 3.5
@@ -20,7 +25,7 @@ struct DragIndicator: View {
   }
   
   
-  var body: some View {
+  public var body: some View {
     Path { path in
       path.move(to: CGPoint(x: 0.00, y: 0))
       path.addLine(to: CGPoint(x: width / 2, y: min(progress , 1.0) * height))
