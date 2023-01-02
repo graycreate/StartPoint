@@ -13,7 +13,6 @@ open class BaseStore: ObservableObject {
   public static var sample: BaseStore {
     shared
   }
-  @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
   @Published public var deviceState: DeviceState = DeviceState()
   
   /// Root UI elements

@@ -51,7 +51,7 @@ public struct NavbarView<Content: View>: View {
   
   public var body: some View {
     VStack(spacing: 0) {
-      Color.clear.frame(height: store.safeArea.top)
+      Color.clear.frame(height: store.deviceState.safeArea.top)
       HStack(alignment: .center, spacing: 0) {
         self.content
           .padding(.vertical, 4)

@@ -38,8 +38,8 @@ public struct RootView<Content: View> : View {
                   withAnimation {
                     BaseStore.shared.deviceState.isPortrait = isPortrait
                   }
-                  BaseStore.shared.safeArea = geo.safeAreaInsets
-                  log("------ SafeArea: \(BaseStore.shared.safeArea) , isPortrait: \(isPortrait)")
+                  BaseStore.shared.deviceState.safeArea = geo.safeAreaInsets
+                  log("------ SafeArea: \(BaseStore.shared.deviceState.safeArea) , isPortrait: \(isPortrait)")
                 }
               }
           }

@@ -12,5 +12,6 @@ import SwiftUI
 public struct DeviceState {
   public var autoHideIndicator: Bool = true
   public var isPortrait: Bool = OritentionMode.isPortraitFromInit
+  public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
 }
 
