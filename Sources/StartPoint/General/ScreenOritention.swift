@@ -53,9 +53,9 @@ public enum OritentionMode: Int {
     runInMain(delay: 50) {
       if oritentionMode == .auto {
         let isPortrait = !UIDevice.current.orientation.isLandscape
-        BaseStore.shared.deviceState.isPortrait = isPortrait
+        GeneralState.shared.isPortrait = isPortrait
       } else {
-        BaseStore.shared.deviceState.isPortrait = (oritentionMode == .portrait)
+        GeneralState.shared.isPortrait = (oritentionMode == .portrait)
       }
     }
   }
@@ -85,7 +85,7 @@ public extension OritentionMode {
     } else if oritention == .landscape {
       result = false
     } else {
-//      result = BaseStore.shared.rootWindow?.windowScene?.interfaceOrientation.isPortrait
+//      result = GlobalState.shared.rootWindow?.windowScene?.interfaceOrientation.isPortrait
       if result == nil {
         log("UIApplication.shared.currentScene?.interfaceOrientation is nil")
         let deviceOrientation = UIDevice.current.orientation

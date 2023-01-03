@@ -18,7 +18,7 @@ public struct RootView<Content: View> : View {
   public var body:some View {
     EmptyView()
       .withHostingWindow { window in
-        BaseStore.shared.rootWindow = window
+        GeneralState.shared.rootWindow = window
         window!.rootViewController = RootHostingController(rootView: innerRootView)
       }
   }
@@ -27,8 +27,9 @@ public struct RootView<Content: View> : View {
   var innerRootView: some View {
     ZStack {
       content
+        .preferredColorScheme(.none)
         .onAppear {
-          BaseStore.shared.deviceState.isPortrait = OritentionMode.isPortraitFromInit
+          GeneralState.shared.isPortrait = OritentionMode.isPortraitFromInit
         }
         .background {
           GeometryReader { geo in
@@ -36,15 +37,17 @@ public struct RootView<Content: View> : View {
               .onRotate { isPortrait in
                 runInMain {
                   withAnimation {
-                    BaseStore.shared.deviceState.isPortrait = isPortrait
+                    GeneralState.shared.isPortrait = isPortrait
                   }
-                  BaseStore.shared.deviceState.safeArea = geo.safeAreaInsets
-                  log("------ SafeArea: \(BaseStore.shared.deviceState.safeArea) , isPortrait: \(isPortrait)")
+                  GeneralState.shared.safeArea = geo.safeAreaInsets
+                  log("------ SafeArea: \(GeneralState.shared.safeArea) , isPortrait: \(isPortrait)")
                 }
               }
           }
         }
     }
+    .environmentObject(GeneralState.shared)
+    .preferredColorScheme(.dark)
   }
   
 }

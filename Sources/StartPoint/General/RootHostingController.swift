@@ -10,7 +10,7 @@ import SwiftUI
 class RootHostingController<Content: View>: UIHostingController<Content> {
   
   override var prefersHomeIndicatorAutoHidden: Bool {
-    let autoHide = BaseStore.shared.deviceState.autoHideIndicator
+    let autoHide = GeneralState.shared.autoHideIndicator
     log("autoHide HomeIndicator: \(autoHide)")
     return autoHide
   }

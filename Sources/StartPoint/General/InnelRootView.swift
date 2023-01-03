@@ -8,7 +8,7 @@
 //import SwiftUI
 //
 //public struct InnelRootView<Content: View>: View {
-//    @EnvironmentObject private var store: BaseStore
+//    @EnvironmentObject private var store: GlobalState
 //    let content: Content
 //
 //  public init(@ViewBuilder content: () -> Content) {

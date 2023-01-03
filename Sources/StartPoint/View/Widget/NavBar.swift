@@ -38,7 +38,7 @@ public struct NavBar<LeftView, CenterView, RightView>: View where LeftView: View
 }
 
 public struct NavbarView<Content: View>: View {
-  @EnvironmentObject private var store: BaseStore
+  @EnvironmentObject private var store: GeneralState
   let content: Content
   let paddingH: CGFloat
   let hideDivider: Bool
@@ -51,7 +51,7 @@ public struct NavbarView<Content: View>: View {
   
   public var body: some View {
     VStack(spacing: 0) {
-      Color.clear.frame(height: store.deviceState.safeArea.top)
+      Color.clear.frame(height: store.safeArea.top)
       HStack(alignment: .center, spacing: 0) {
         self.content
           .padding(.vertical, 4)

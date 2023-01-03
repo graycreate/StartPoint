@@ -344,7 +344,7 @@ public extension View {
 }
 
 public extension View {
-  func injectSample(_ store: BaseStore = .sample) -> some View {
+  func injectSample(_ store: GeneralState = .sample) -> some View {
     return self.environmentObject(store)
   }
 }
