@@ -27,7 +27,6 @@ public struct RootView<Content: View> : View {
   var innerRootView: some View {
     ZStack {
       content
-        .preferredColorScheme(.none)
         .onAppear {
           GeneralState.shared.isPortrait = OritentionMode.isPortraitFromInit
         }
@@ -47,7 +46,6 @@ public struct RootView<Content: View> : View {
         }
     }
     .environmentObject(GeneralState.shared)
-    .preferredColorScheme(.dark)
   }
   
 }

@@ -350,7 +350,11 @@ public extension View {
 }
 
 
-
+extension Text {
+  public func font(_ size: CGFloat = 17, weight: Font.Weight? = nil, design: Font.Design? = nil) -> Text {
+    return self.font(.system(size: size, design: design ?? .default).weight(weight ?? .regular))
+  }
+}
 
 
 // Our custom view modifier to track rotation and
