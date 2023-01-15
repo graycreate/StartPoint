@@ -10,48 +10,30 @@ import SwiftUI
 struct ColorSliderView: View {
   var initColor: Color
   @Binding var slidingColor: Color
-  var size: CGSize = .zero
-  var strokeWidth: CGFloat
-  @State private var offsetX: CGFloat
-  @State private var progress: CGFloat
-  private var dragCircleSize: CGFloat
-  
-  init(initColor: Color, slidingColor: Binding<Color>, size: CGSize, strokeWidth: CGFloat = 16) {
-    self.initColor = initColor
-    self._slidingColor = slidingColor
-    self.size = size
-    self.strokeWidth = strokeWidth
-    let progress = max(0, min(1, (slidingColor.raw.s / initColor.s) * 0.5))
-    self.progress = progress
-    let dragCircleSize = strokeWidth * 2
-    self.dragCircleSize = dragCircleSize
-    self.offsetX = progress  * (size.width - dragCircleSize)
-    log("init ----- offsetX: \(offsetX), progress: \(progress)")
+  var strokeWidth: CGFloat = 16
+  var size: CGSize
+  private var dragCircleSize: CGFloat {
+    strokeWidth * 2
   }
+  
+  private var dragCircleColor: Color {
+    let initHsba = initColor.hsba
+    return Color(hue: initHsba.h, saturation: slidingColor.s + dragSaturationOffset, brightness: initHsba.b)
+  }
+  
+  var effectiveWidth: Double { size.width - dragCircleSize }
+  @State private var dragSaturationOffset = 0.0
+  
   
   private var gradient: LinearGradient {
     let h = initColor.hue
     let b = initColor.b
     let colors: [Color] = [
-      Color(hue: h, saturation: startSaturation, brightness: b),
+      Color(hue: h, saturation: 0, brightness: b),
       Color(hue: h, saturation: initColor.s, brightness: b),
-      Color(hue: h, saturation: endSaturation, brightness: b),
+      Color(hue: h, saturation: 1.0, brightness: b),
     ]
     return LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
-  }
-  
-  private var startSaturation: CGFloat {
-    max(0.0, initColor.s - 0.5)
-  }
-  
-  private var endSaturation: CGFloat {
-    min(1.0, initColor.s + 0.5)
-  }
-  
-  
-  
-  private var saturation: CGFloat {
-    (endSaturation - startSaturation) * progress + startSaturation
   }
   
   
@@ -65,34 +47,37 @@ struct ColorSliderView: View {
             .stroke(.black.opacity(0.02), lineWidth: 2)
         }
       Circle()
-        .stroke(.white, lineWidth: 2)
-        .background {
+        .fill(.white)
+        .overlay {
           Circle()
-            .fill(slidingColor)
+            .fill(dragCircleColor)
+            .frame(width: dragCircleSize - 4)
         }
         .frame(width: dragCircleSize)
-        .offset(x: offsetX)
-        .gesture(DragGesture().onChanged(onDrag(value:)))
+        .offset(x: effectiveWidth * (slidingColor.s + dragSaturationOffset))
+        .gesture(DragGesture().onChanged(onDragChange(value:)).onEnded(onDragEnd(value:)))
     }
     .frame(width: size.width)
-    
   }
   
   
-  func onDrag(value: DragGesture.Value) {
-    let dragX = value.location.x
-    offsetX = min(size.width - dragCircleSize, max(0, dragX))
-    progress = offsetX / (size.width - dragCircleSize)
-    slidingColor.changeHSB(s: saturation)
-    log("dragX: \(dragX), offSetX: \(offsetX), --> range: \(size.width - dragCircleSize)")
+  func onDragChange(value: DragGesture.Value) {
+    dragSaturationOffset = value.translation.width / effectiveWidth
+    dragSaturationOffset = max(dragSaturationOffset, -slidingColor.s)
+    dragSaturationOffset = min(dragSaturationOffset, 1-slidingColor.s)
+  }
+  
+  func onDragEnd(value: DragGesture.Value) {
+    slidingColor.changeHSB(s: slidingColor.s + dragSaturationOffset)
+    dragSaturationOffset = 0
   }
   
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
-  @State static var initColor: Color = .defaultPanel[2]
+struct ColorSliderView_Previews: PreviewProvider {
+  static var initColor: Color = .defaultPanel[2]
   @State static var selectedColor: Color = .defaultPanel[2]
-  
+
   static var previews: some View {
     GeometryReader { geo in
       VStack {
@@ -101,7 +86,7 @@ struct SwiftUIView_Previews: PreviewProvider {
       .greedyFrame()
     }
     .padding(.horizontal)
-    .visualBlur()
+    .visualBlur(bg: .black)
     .ignoresSafeArea()
   }
 }

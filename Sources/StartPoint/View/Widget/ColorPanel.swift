@@ -24,17 +24,17 @@ public struct ColorPanel: View {
     VStack(spacing: padding) {
       HStack(spacing: padding) {
         ForEach(0..<6) { index in
-          ColorDotView(color: colors[index], selectedColor: $initColor)
+          ColorDotView(color: colors[index], selectedColor: $initColor, slidingColor: $slidingColor)
         }
       }
       HStack(spacing: padding) {
         ForEach(6..<12) { index in
-          ColorDotView(color: colors[index], selectedColor: $initColor)
+          ColorDotView(color: colors[index], selectedColor: $initColor, slidingColor: $slidingColor)
         }
       }
       HStack(spacing: padding) {
         ForEach(12..<18) { index in
-          ColorDotView(color: colors[index], selectedColor: $initColor)
+          ColorDotView(color: colors[index], selectedColor: $initColor, slidingColor: $slidingColor)
         }
       }
     }
@@ -46,9 +46,6 @@ public struct ColorPanel: View {
           ColorSliderView(initColor: initColor, slidingColor: $slidingColor, size: geo.size)
         }
       }
-    }
-    .onChange(of: initColor) { newInitColor in
-      slidingColor = newInitColor
     }
     
   }
@@ -62,6 +59,7 @@ extension Color: Identifiable {
 struct ColorDotView: View {
   var color: Color = .clear
   @Binding var selectedColor: Color
+  @Binding public var slidingColor: Color
   
   static let scale: CGFloat = 0.8
   let size: CGFloat = 48 * scale
@@ -84,6 +82,7 @@ struct ColorDotView: View {
       }
       .onTapGesture {
         selectedColor = self.color
+        slidingColor = self.color
       }
   }
 }
