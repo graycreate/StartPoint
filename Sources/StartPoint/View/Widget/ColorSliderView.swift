@@ -10,10 +10,10 @@ import SwiftUI
 struct ColorSliderView: View {
   var initColor: Color
   @Binding var slidingColor: Color
-  var strokeWidth: CGFloat = 16
+  var strokeWidth: CGFloat = 13
   var size: CGSize
   private var dragCircleSize: CGFloat {
-    strokeWidth * 2
+    strokeWidth * 2.6
   }
   
   var effectiveWidth: Double { size.width - dragCircleSize }
@@ -22,13 +22,46 @@ struct ColorSliderView: View {
   
   private var gradient: LinearGradient {
     let h = initColor.hue
+    let s = initColor.s
     let b = initColor.b
-    let colors: [Color] = [
-      Color(hue: h, saturation: 0, brightness: b),
-      Color(hue: h, saturation: initColor.s, brightness: b),
-      Color(hue: h, saturation: 1.0, brightness: b),
-    ]
+    var colors: [Color]
+    if shouldChangeBrightness {
+      if b == 0 {
+        colors = [
+          Color(hue: h, saturation: s, brightness: 1),
+          Color(hue: h, saturation: s, brightness: b),
+        ]
+      } else if b == 1 {
+        colors = [
+          Color(hue: h, saturation: s, brightness: b),
+          Color(hue: h, saturation: s, brightness: 0),
+        ]
+      } else {
+        colors = [
+          Color(hue: h, saturation: s, brightness: 1),
+          Color(hue: h, saturation: s, brightness: b),
+          Color(hue: h, saturation: s, brightness: 0),
+        ]
+      }
+    } else {
+      colors = [
+        Color(hue: h, saturation: 0, brightness: b),
+        Color(hue: h, saturation: s, brightness: b),
+        Color(hue: h, saturation: 1.0, brightness: b),
+      ]
+    }
     return LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing)
+  }
+  
+  private var shouldChangeBrightness: Bool {
+    return initColor.hue == 0 && initColor.s == 0
+  }
+  
+  private var modifiableElement: CGFloat {
+    if shouldChangeBrightness {
+      return slidingColor.b
+    }
+    return slidingColor.s
   }
   
   
@@ -39,7 +72,7 @@ struct ColorSliderView: View {
         .frame(width: size.width, height: strokeWidth)
         .overlay {
           RoundedRectangle(cornerRadius: 20)
-            .stroke(.black.opacity(0.02), lineWidth: 2)
+            .stroke(.black.opacity(0.08), lineWidth: 2)
         }
       Circle()
         .fill(.white)
@@ -49,10 +82,18 @@ struct ColorSliderView: View {
             .frame(width: dragCircleSize - 4)
         }
         .frame(width: dragCircleSize)
-        .offset(x: effectiveWidth * (slidingColor.s))
+        .offset(x: effectiveWidth * (progress))
         .gesture(DragGesture().onChanged(onDragChange(value:)).onEnded(onDragEnd(value:)))
     }
     .frame(width: size.width)
+  }
+  
+  private var progress: CGFloat {
+    if shouldChangeBrightness {
+      return 1 - modifiableElement
+    }
+    
+    return modifiableElement
   }
   
   
@@ -60,8 +101,13 @@ struct ColorSliderView: View {
   func onDragChange(value: DragGesture.Value) {
     dragSaturationOffset = value.translation.width / effectiveWidth
     let delta = dragSaturationOffset - lastDragSaturationOffset
-    let newS = (slidingColor.s + delta).in(0.0001, 0.9999)
-    slidingColor.changeHSB(s: newS)
+    if shouldChangeBrightness {
+      let modified = (modifiableElement - delta).in(0.0001, 0.9999)
+      slidingColor.changeHSB(b: modified)
+    } else {
+      let modified = (modifiableElement + delta).in(0.0001, 0.9999)
+      slidingColor.changeHSB(s: modified)
+    }
     lastDragSaturationOffset = dragSaturationOffset
   }
   
@@ -75,7 +121,7 @@ struct ColorSliderView: View {
 struct ColorSliderView_Previews: PreviewProvider {
   static var initColor: Color = .defaultPanel[2]
   @State static var selectedColor: Color = .defaultPanel[2]
-
+  
   static var previews: some View {
     GeometryReader { geo in
       VStack {
