@@ -16,14 +16,9 @@ struct ColorSliderView: View {
     strokeWidth * 2
   }
   
-  private var dragCircleColor: Color {
-    let initHsba = initColor.hsba
-    return Color(hue: initHsba.h, saturation: slidingColor.s + dragSaturationOffset, brightness: initHsba.b)
-  }
-  
   var effectiveWidth: Double { size.width - dragCircleSize }
   @State private var dragSaturationOffset = 0.0
-  
+  @State private var lastDragSaturationOffset = 0.0
   
   private var gradient: LinearGradient {
     let h = initColor.hue
@@ -50,26 +45,29 @@ struct ColorSliderView: View {
         .fill(.white)
         .overlay {
           Circle()
-            .fill(dragCircleColor)
+            .fill(slidingColor)
             .frame(width: dragCircleSize - 4)
         }
         .frame(width: dragCircleSize)
-        .offset(x: effectiveWidth * (slidingColor.s + dragSaturationOffset))
+        .offset(x: effectiveWidth * (slidingColor.s))
         .gesture(DragGesture().onChanged(onDragChange(value:)).onEnded(onDragEnd(value:)))
     }
     .frame(width: size.width)
   }
   
   
+  
   func onDragChange(value: DragGesture.Value) {
     dragSaturationOffset = value.translation.width / effectiveWidth
-    dragSaturationOffset = max(dragSaturationOffset, -slidingColor.s)
-    dragSaturationOffset = min(dragSaturationOffset, 1-slidingColor.s)
+    let delta = dragSaturationOffset - lastDragSaturationOffset
+    let newS = (slidingColor.s + delta).in(0.0001, 0.9999)
+    slidingColor.changeHSB(s: newS)
+    lastDragSaturationOffset = dragSaturationOffset
   }
   
   func onDragEnd(value: DragGesture.Value) {
-    slidingColor.changeHSB(s: slidingColor.s + dragSaturationOffset)
     dragSaturationOffset = 0
+    lastDragSaturationOffset = 0
   }
   
 }
