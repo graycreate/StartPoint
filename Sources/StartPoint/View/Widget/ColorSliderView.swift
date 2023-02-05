@@ -22,8 +22,9 @@ struct ColorSliderView: View {
   
   private var gradient: LinearGradient {
     let h = initColor.hue
-    let s = initColor.s
+    var s = initColor.s.in(0, 1)
     let b = initColor.b
+    
     var colors: [Color]
     if shouldChangeBrightness {
       if b == 0 {
@@ -93,7 +94,7 @@ struct ColorSliderView: View {
       return 1 - modifiableElement
     }
     
-    return modifiableElement
+    return modifiableElement.in(0, 1)
   }
   
   
