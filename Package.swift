@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "StartPoint",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v16),
 //        .macCatalyst(.v13),
 //        .macOS(.v10_15)
     ],

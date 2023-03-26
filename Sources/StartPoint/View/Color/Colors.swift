@@ -16,5 +16,8 @@ extension Color {
     .hex("#b1c0ab"), .hex("#9eb7bd"), .hex("#b7a7b7"), .hex("#bbb1a6"), .hex("#643c15"), .hex("#5e5e5e"),
   ]
   
+  public static let labelColor: Color = UIColor.label.color()
+  public static let labelColorWeek: Color = UIColor.label.color().opacity(0.86)
+  
   
 }

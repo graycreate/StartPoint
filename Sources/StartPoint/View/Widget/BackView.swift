@@ -1,6 +1,6 @@
 //
 //  BackView.swift
-//  RememDays
+//  Remember
 //
 //  Created by GARY on 2022/12/17.
 //
@@ -8,6 +8,7 @@
 import SwiftUI
 
 public struct BackView: View {
+  var color: Color = UIColor.label.color()
   @Environment(\.dismiss) var dismiss
   var onBackPressed: (()->Void)?
   
@@ -21,9 +22,9 @@ public struct BackView: View {
       dismiss()
     } label: {
       Image(systemName: "chevron.backward")
-        .font(.title2.weight(.regular))
+        .font(.title2.weight(.semibold))
         .padding(.vertical, 10)
-        .foregroundColor(.accent)
+        .foregroundColor(color)
     }
   }
 }

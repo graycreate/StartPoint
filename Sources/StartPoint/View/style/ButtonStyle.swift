@@ -1,0 +1,21 @@
+//
+//  File.swift
+//  
+//
+//  Created by GARY on 2023/3/19.
+//
+
+import SwiftUI
+
+public struct ShrunkButton: ButtonStyle {
+  let factor: CGFloat
+  public init(factor: CGFloat = 0.98) {
+    self.factor = factor
+  }
+  
+  public func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .scaleEffect(configuration.isPressed ? factor : 1)
+      .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+  }
+}

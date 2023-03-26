@@ -1,6 +1,6 @@
 //
 //  Store.swift
-//  RememDays
+//  Remember
 //
 //  Created by GARY on 2022/12/17.
 //
@@ -14,7 +14,7 @@ open class GeneralState: ObservableObject {
     shared
   }
 //  @Published public var deviceState: DeviceState = DeviceState()
-  @Published public var autoHideIndicator: Bool = true
+  @Published public var autoHideIndicator: Bool = false
   @Published public var isPortrait: Bool = OritentionMode.isPortraitFromInit
   @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
   

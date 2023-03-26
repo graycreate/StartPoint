@@ -1,37 +1,43 @@
 //
 //  NavBar.swift
-//  RememDays
+//  Remember
 //
 //  Created by GARY on 2022/12/12.
 //
 
 import SwiftUI
 
-public struct NavBar<LeftView, CenterView, RightView>: View where LeftView: View, CenterView: View, RightView: View {
+public struct NavBar<LeftView, CenterView, RightView, BottomView>: View where LeftView: View, CenterView: View, RightView: View, BottomView: View {
   
   let leftView: LeftView?
   let centerView: CenterView
   let rightView: RightView?
+  let bottomView: BottomView?
   
   public init(@ViewBuilder leftView: () -> LeftView = { EmptyView() } ,
               @ViewBuilder centerView: () -> CenterView = { Text("Title")},
-              @ViewBuilder rightView: () -> RightView = { EmptyView() }) {
+              @ViewBuilder rightView: () -> RightView = { EmptyView() },
+              @ViewBuilder bottomView: () -> BottomView = { EmptyView() }) {
     self.leftView = leftView()
     self.centerView = centerView()
     self.rightView = rightView()
+    self.bottomView = bottomView()
   }
   
   public var body: some View {
     NavbarView {
-      ZStack {
-        HStack(alignment: .center, spacing: 4) {
-          leftView
-          Spacer()
-          rightView
+      VStack(spacing: 0) {
+        ZStack {
+          HStack(alignment: .center, spacing: 0) {
+            leftView
+            Spacer()
+            rightView
+          }
+          HStack(alignment: .center, spacing: 0) {
+            centerView
+          }
         }
-        HStack(alignment: .center) {
-          centerView
-        }
+        bottomView
       }
     }
   }
@@ -54,7 +60,6 @@ public struct NavbarView<Content: View>: View {
       Color.clear.frame(height: store.safeArea.top)
       HStack(alignment: .center, spacing: 0) {
         self.content
-          .padding(.vertical, 4)
       }
       .greedyWidth()
       Divider()
@@ -80,6 +85,8 @@ struct NavBar_Previews: PreviewProvider {
         .padding(.vertical, 20)
     } rightView: {
       Text("Save")
+    } bottomView: {
+      Text("BottomView")
     }
     .injectSample()
   }

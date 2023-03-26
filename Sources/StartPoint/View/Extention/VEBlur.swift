@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct VEBlur: UIViewRepresentable {
-    var style: UIBlurEffect.Style = .systemUltraThinMaterial
+  var style: UIBlurEffect.Style = .systemMaterial
     var bg: Color = .clear
 
     func makeUIView(context: Context) -> UIVisualEffectView {

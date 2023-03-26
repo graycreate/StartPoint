@@ -73,16 +73,16 @@ struct ColorSliderView: View {
         .frame(width: size.width, height: strokeWidth)
         .overlay {
           RoundedRectangle(cornerRadius: 20)
-            .stroke(.black.opacity(0.08), lineWidth: 2)
+            .strokeBorder(.black.opacity(0.08), lineWidth: 2)
         }
       Circle()
         .fill(.white)
         .overlay {
           Circle()
             .fill(slidingColor)
-            .frame(width: dragCircleSize - 4)
+            .frame(width: dragCircleSize - 3)
         }
-        .frame(width: dragCircleSize)
+        .frame(width: dragCircleSize + 1)
         .offset(x: effectiveWidth * (progress))
         .gesture(DragGesture().onChanged(onDragChange(value:)).onEnded(onDragEnd(value:)))
     }
@@ -103,10 +103,10 @@ struct ColorSliderView: View {
     dragSaturationOffset = value.translation.width / effectiveWidth
     let delta = dragSaturationOffset - lastDragSaturationOffset
     if shouldChangeBrightness {
-      let modified = (modifiableElement - delta).in(0.0001, 0.9999)
+      let modified = (modifiableElement - delta).in(0.000001, 0.999999)
       slidingColor.changeHSB(b: modified)
     } else {
-      let modified = (modifiableElement + delta).in(0.0001, 0.9999)
+      let modified = (modifiableElement + delta).in(0.000001, 0.999999)
       slidingColor.changeHSB(s: modified)
     }
     lastDragSaturationOffset = dragSaturationOffset

@@ -58,7 +58,7 @@ public func runInMain(delay: Double = 0, execute work: @escaping @convention(blo
     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(delay)), execute: work)
 }
 
-public func delay(_ duration: Double = 0, _ work: @escaping @convention(block) () -> Void) {
+public func delay(_ duration: Double = 10, _ work: @escaping @convention(block) () -> Void) {
     runInMain(delay: duration, execute: work)
 }
 
@@ -122,7 +122,7 @@ struct MailHelper {
 
 }
 
-extension Bundle {
+public extension Bundle {
 
     var shortVersion: String {
         if let result = infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -143,7 +143,7 @@ extension Bundle {
     }
 
     var fullVersion: String {
-        return "\(shortVersion)(\(buildVersion))"
+        return "\(shortVersion) (\(buildVersion))"
     }
 }
 
@@ -156,3 +156,4 @@ public extension String {
         bundleID() + "." + self
     }
 }
+

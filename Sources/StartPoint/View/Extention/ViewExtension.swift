@@ -17,7 +17,7 @@ public extension UIEdgeInsets {
 }
 
 public extension View {
-  public func debug(_ force: Bool = false, _ color: Color = .green) -> some View {
+  public func debug(_ force: Bool = true, _ color: Color = .green) -> some View {
     //        print(Mirror(reflecting: self).subjectType)
     return self.modifier(DebugModifier(force, color))
   }
@@ -66,11 +66,13 @@ struct RoundedEdgeModifier: ViewModifier {
   var width: CGFloat = 2
   var color: Color = .black
   var cornerRadius: CGFloat = 16.0
+  var corners: UIRectCorner
   
-  init(radius: CGFloat, width: CGFloat, color: Color) {
+  init(radius: CGFloat, corners: UIRectCorner, width: CGFloat, color: Color) {
     self.cornerRadius = radius
     self.width = width
     self.color = color
+    self.corners = corners
   }
   
   func body(content: Content) -> some View {
@@ -81,9 +83,11 @@ struct RoundedEdgeModifier: ViewModifier {
         .overlay(Circle().stroke(color, lineWidth: width))
     } else {
       content
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+//        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .clipShape(ClipCornerShape(radius: cornerRadius, corners: corners))
         .overlay {
-          RoundedRectangle(cornerRadius: cornerRadius)
+//          RoundedRectangle(cornerRadius: cornerRadius)
+          ClipCornerShape(radius: cornerRadius, corners: corners)
             .stroke(color, lineWidth: width)
             .padding(0)
         }
@@ -183,15 +187,17 @@ public extension View {
     return self.background(Color.almostClear)
   }
   
-  public func cornerBorder(radius: CGFloat = -1,
-                           borderWidth: CGFloat = 0.8,
-                           color: Color = Color.border) -> some View {
-    self.modifier(RoundedEdgeModifier(radius: radius,
-                                      width: borderWidth, color: color))
+  public func clip(radius: CGFloat = -1,
+                           corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight],
+                           strokeSize: CGFloat = 1,
+                           strokeColor: Color = Color.border
+                           ) -> some View {
+    self.modifier(RoundedEdgeModifier(radius: radius, corners: corners,
+                                      width: strokeSize, color: strokeColor))
   }
   
   func clipCorner(_ radius: CGFloat, corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight]) -> some View {
-    clipShape( ClipCornerShape(radius: radius, corners: corners) )
+    clipShape(ClipCornerShape(radius: radius, corners: corners) )
   }
   
   func hide(_ hide: Bool = true) -> some View {
@@ -256,12 +262,12 @@ public extension View {
   }
   
   
-  func hapticOnTap(style: UIImpactFeedbackGenerator.FeedbackStyle = .light) -> some View {
-    self.onTapGesture {
-      let impact = UIImpactFeedbackGenerator(style: style)
-      impact.impactOccurred()
-    }
-  }
+//  func hapticOnTap(style: UIImpactFeedbackGenerator.FeedbackStyle = .light) -> some View {
+//    self.onTapGesture {
+//      let impact = UIImpactFeedbackGenerator(style: style)
+//      impact.impactOccurred()
+//    }
+//  }
 }
 
 //struct EmptyView: View {
@@ -343,6 +349,35 @@ public extension View {
   }
 }
 
+struct ViewBorderModifier: ViewModifier {
+  var color: Color
+  var radius: CGFloat
+  var hide: Bool
+  
+  func body(content: Content) -> some View {
+    if hide {
+      content
+    } else {
+      content
+        .shadow(color: color, radius: radius)
+    }
+  }
+}
+
+struct EmptyModifier: ViewModifier {
+  func body(content: Content) -> some View {
+    content
+  }
+}
+
+public extension View {
+  func viewBorder(color: Color = .black, radius: CGFloat = 1, hide: Bool = false) -> some View {
+//    return self
+    return self.modifier(ViewBorderModifier(color: color, radius: radius, hide: hide))
+  }
+  
+}
+
 public extension View {
   func injectSample(_ store: GeneralState = .sample) -> some View {
     return self.environmentObject(store)
@@ -392,4 +427,41 @@ extension UIApplication {
     connectedScenes
       .first { $0.activationState == .foregroundActive } as? UIWindowScene
   }
+}
+
+
+struct AdaptsToKeyboard: ViewModifier {
+    @State var currentHeight: CGFloat = 0
+    
+    func body(content: Content) -> some View {
+        GeometryReader { geometry in
+            content
+                .padding(.bottom, self.currentHeight)
+                .onAppear(perform: {
+                    NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillShowNotification)
+                        .merge(with: NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillChangeFrameNotification))
+                        .compactMap { notification in
+                            withAnimation(.easeOut(duration: 0.16)) {
+                                notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+                            }
+                    }
+                    .map { rect in
+                        rect.height - geometry.safeAreaInsets.bottom
+                    }
+                    .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
+                    
+                    NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillHideNotification)
+                        .compactMap { notification in
+                            CGFloat.zero
+                    }
+                    .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
+                })
+        }
+    }
+}
+
+public extension View {
+    func adaptsToKeyboard() -> some View {
+        return modifier(AdaptsToKeyboard())
+    }
 }

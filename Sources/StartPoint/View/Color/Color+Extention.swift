@@ -1,6 +1,6 @@
 //
 //  Colors.swift
-//  RememDays
+//  Remember
 //
 //  Created by GARY on 2022/12/12.
 //
@@ -30,8 +30,12 @@ public extension Color {
     Color(hue: h, saturation: s, brightness: b, opacity: a)
   }
   
-  func adaptive(dark: Color? = nil)-> Color {
-    Color(self , dark: dark ?? self.opacity(0.8))
+  func adaptive(dark: Color? = nil, alpha: CGFloat = 0.85)-> Color {
+    Color(self , dark: dark ?? self.opacity(alpha))
+  }
+  
+  func dark(_ color: Color? = nil, alpha: CGFloat = 0.85) -> Color {
+    self.adaptive(dark: color, alpha: alpha)
   }
   
   func shape(_ hex: Int, alpha: CGFloat = 1.0) -> some View {
@@ -71,12 +75,12 @@ public extension Color {
   
   
   // New Color
-  static let primaryColor = Color.black.adaptive(dark: .white)
-  static let secondary = Color.black.adaptive(dark: .white)
-  static let accent = Color.black.adaptive(dark: .white)
-  static let accentDisabled = Color.gray.adaptive()
-  static let deAccent = Color.white.adaptive(dark: .black)
-  static let adaptiveWhite = Color.white.adaptive()
+//  static let primaryColor = Color.black.adaptive(dark: .white)
+//  static let secondary = Color.black.adaptive(dark: .white)
+//  static let accent = Color.black.adaptive(dark: .white)
+//  static let accentDisabled = Color.gray.adaptive()
+//  static let deAccent = Color.white.adaptive(dark: .black)
+//  static let adaptiveWhite = Color.white.adaptive()
   
   //  static let bg = hex(0xF5F5F5)
   static let bg = hex(0xededed)
@@ -170,6 +174,16 @@ public extension UIColor {
     return hsba
   }
   
+  var hex: String {
+    var r:CGFloat = 0
+    var g:CGFloat = 0
+    var b:CGFloat = 0
+    var a:CGFloat = 0
+    getRed(&r, green: &g, blue: &b, alpha: &a)
+    let rgb:Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
+    return NSString(format:"#%06x", rgb) as String
+  }
+  
 }
 
 public extension String? {
@@ -206,11 +220,12 @@ public extension Int64 {
 }
 
 public extension Color {
-  @available(iOS 15, *)
-  var gradient: LinearGradient {
-    return LinearGradient(colors: [self], startPoint: UnitPoint(x: 0.5, y: 0), endPoint: UnitPoint(x: 0.5, y: 1))
+  var hex: String {
+    self.uiColor.hex
   }
+  
 }
+
 
 public struct HSBA {
   public var h: CGFloat
@@ -223,6 +238,31 @@ public struct HSBA {
   }
 }
 
+extension UIColor {
+  // Whether this color is a light color
+  func isLight(threshold: Float = 0.5) -> Bool {
+    let originalCGColor = self.cgColor
+    // Now we need to convert it to the RGB colorspace. UIColor.white / UIColor.black are greyscale and not RGB.
+    // If you don't do this then you will crash when accessing components index 2 below when evaluating greyscale colors.
+    let RGBCGColor = originalCGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
+    guard let components = RGBCGColor?.components else {
+      return false
+    }
+    guard components.count >= 3 else {
+      return false
+    }
+    
+    let brightness = Float(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
+    return (brightness > threshold)
+  }
+}
+
+extension Color {
+  public func isLight(threshold: Float = 0.5)-> Bool {
+    self.uiColor.isLight(threshold: threshold)
+  }
+}
+
 
 
 struct Color_Previews: PreviewProvider {
@@ -231,8 +271,6 @@ struct Color_Previews: PreviewProvider {
       Color.black.frame(width: 100, height: 100)
       Color.hex(0xFBFBFB).frame(width: 100, height: 100)
       Color.hex(0x00FF00, alpha: 0.2)
-        .frame(width: 100, height: 100)
-      Color.red.gradient
         .frame(width: 100, height: 100)
       Color.hex(0xFF00FF).frame(width: 100, height: 100)
       Color.tintColor.frame(width: 100, height: 100)
