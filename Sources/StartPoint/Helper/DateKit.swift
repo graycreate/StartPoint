@@ -20,4 +20,22 @@ public extension Calendar {
       return numberOfDays.day!
   }
   
+  func dateByAddingDays(date: Date, days: Int) -> Date {
+    return self.date(byAdding: .day, value: days, to: date)!
+  }
+  
+}
+
+public extension Date {
+  func set(hour: Int, minute: Int = 0, second: Int = 0, calendar: Calendar = .current) -> Date? {
+    calendar.date(bySettingHour: hour,
+                  minute: minute,
+                  second: second,
+                  of: self)
+  }
+  
+  var expired: Bool {
+    Date.now > self
+  }
+  
 }

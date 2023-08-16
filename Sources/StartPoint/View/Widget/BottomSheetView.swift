@@ -9,11 +9,14 @@ import SwiftUI
 
 public struct BottomSheetView<Content: View, AnchorView: View>: View {
   @Binding var isShowing: Bool
+  let title: String
   var content: Content
   let anchorView: AnchorView
   
-  init(isShowing: Binding<Bool>, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
+  
+  init(isShowing: Binding<Bool>, title: String, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
     self._isShowing = isShowing
+    self.title = title
     self.content = content()
     self.anchorView = anchorView
   }
@@ -21,47 +24,74 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
   public var body: some View {
     ZStack(alignment: .bottom) {
       self.anchorView
+      self.dimView
+        .zIndex(0)
       if (isShowing) {
-        self.dimView
-          .zIndex(0)
-        self.content
-          .overlay(alignment: .topTrailing) {
-            Button {
-              dismiss()
-            } label: {
-              Image(systemName: "xmark.circle.fill")
-                .symbolRenderingMode(.hierarchical)
-                .font(.system(size: 27, weight: .semibold))
-                .foregroundStyle(UIColor.systemGray2.color())
-                .clipShape(Circle())
-            }
-          }
-          .padding(.vertical)
-          .padding(.horizontal)
-          .background(.regularMaterial)
-          .clip(radius: 36)
-          .transition(.move(edge: .bottom))
-          .zIndex(1)
+        VStack(spacing: 14) {
+          self.titleBarView
+          self.content
+//            .padding(.horizontal, 2)
+        }
+        .padding(30)
+        .padding(.top, 0)
+//        .background(.ultraThickMaterial) // Toggle issue, untint color invisiable
+        .visualBlur(bg: .white.dark(.black).opacity(0.5), style: .systemThickMaterial)
+        .clip(radius: 38)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 26)
+        .transition(.move(edge: .bottom))
+        .zIndex(1)
       }
     }
-    .greedyFrame(.bottom)
     .ignoresSafeArea()
-    .animation(.easeInOut, value: isShowing)
+    .animation(self.animation, value: isShowing)
+  }
+  
+  @ViewBuilder
+  private var titleBarView: some View {
+    HStack(alignment: .top) {
+      SheetTitle(self.title)
+      Spacer()
+      Button {
+        dismiss()
+      } label: {
+        Image(systemName: "xmark.circle.fill")
+          .symbolRenderingMode(.hierarchical)
+          .font(.system(size: 27, weight: .semibold))
+          .foregroundStyle(UIColor.systemGray3.color())
+          .clipShape(Circle())
+      }
+      .padding(.trailing, -5)
+    }
+  }
+  
+  private var animation: Animation {
+    .easeInOut
+//    .speed(1.3)
+//    .spring(
+//      response: 0.45,
+//      dampingFraction: 0.85,
+//      blendDuration: 1
+//    )
+//    .speed(1.3)
+  }
+  
+  private var dimAnimation: Animation {
+    .easeInOut
+    .speed(0.5)
+    .delay(1.1)
   }
   
   private var dimView: some View {
-    Color.black
-      .opacity(0.3)
-      .transition(.opacity)
+    Color.black.opacity(isShowing ? 0.4 : 0.0)
       .ignoresSafeArea()
-      .transition(.opacity)
       .onTapGesture {
         dismiss()
       }
   }
   
   private func dismiss() {
-    withAnimation(.easeInOut(duration: 0.26)) {
+    withAnimation(self.animation) {
       isShowing.toggle()
     }
   }
@@ -69,35 +99,38 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
 }
 
 public extension View {
-  func bottomSheet<Content: View>(isShowing: Binding<Bool>, @ViewBuilder content: ()-> Content) -> BottomSheetView<Content, Self> {
-    BottomSheetView(isShowing: isShowing, content: content, anchorView: self)
+  func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: String, @ViewBuilder content: ()-> Content) -> BottomSheetView<Content, Self> {
+    BottomSheetView(isShowing: isShowing, title: title, content: content, anchorView: self)
   }
 }
 
-public struct SheetTitle: View {
-    let title: String
-    
-    public init(_ title: String) {
-      self.title = title
-    }
-    
-    public var body: some View {
-      Text(title)
-        .font(.system(size: 21, weight: .semibold))
-        .bold()
-        .lineLimit(1)
-        .foregroundColor(.labelColorWeek)
-        .padding(.bottom, 16)
-    }
+private struct SheetTitle: View {
+  let title: String
+  
+  public init(_ title: String) {
+    self.title = title
   }
+  
+  public var body: some View {
+    Text(title)
+      .font(.system(size: 19, weight: .semibold, design: .rounded))
+      .bold()
+      .lineLimit(1)
+      .foregroundColor(.labelColorWeak)
+      .greedyWidth(.leading)
+  }
+}
 
 struct SwiftUIView_Previews: PreviewProvider {
   @State static var isShowing = true
   
   static var previews: some View {
     Text("Title")
-      .bottomSheet(isShowing: $isShowing) {
+      .bottomSheet(isShowing: $isShowing, title: "Test") {
         Text("Content")
+          .greedyWidth()
+          .frame(height: 300)
+          .background(.white)
       }
   }
   

@@ -12,14 +12,14 @@ import UIKit
 import SwiftUI
 
 private let loggable: Bool = true
-public let TAG = "DEBUG_TAG"
+public let TAG = "DEBUG_TAG: "
 
-public func log(tag: String = TAG, _ items: Any..., separator: String = " ", terminator: String = "\n") {
+public func log(tag: String = .empty, _ items: Any..., separator: String = " ", terminator: String = "\n") {
     if !loggable {
         return
     }
 #if DEBUG
-    print(tag, items, separator, terminator)
+    print(TAG + tag, items, separator, terminator)
 #endif
 }
 
@@ -58,11 +58,11 @@ public func runInMain(delay: Double = 0, execute work: @escaping @convention(blo
     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(delay)), execute: work)
 }
 
-public func delay(_ duration: Double = 10, _ work: @escaping @convention(block) () -> Void) {
+public func delay(_ duration: Double = 2, _ work: @escaping @convention(block) () -> Void) {
     runInMain(delay: duration, execute: work)
 }
 
-public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
+public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .soft) {
     let impactHeavy = UIImpactFeedbackGenerator(style: style)
     impactHeavy.impactOccurred()
 }

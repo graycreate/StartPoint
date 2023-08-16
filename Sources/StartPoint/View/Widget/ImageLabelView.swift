@@ -43,12 +43,12 @@ public struct ImageLabelView<RightView: View>: View {
       if systemName.notEmpty() {
         Image(systemName: systemName)
           .font(.system(size: 19, weight: .medium, design: .rounded))
-          .foregroundColor(Color.labelColorWeek)
+          .foregroundColor(Color.labelColorWeak)
       }
-      VStack(alignment: .leading) {
+      VStack(alignment: .leading, spacing: 2.4) {
         Text(text)
           .font(.system(size: 19, weight: .medium, design: .rounded))
-          .foregroundColor(Color.labelColorWeek)
+          .foregroundColor(Color.labelColorWeak)
         if multiValue {
           Text(values.joined(separator: ", "))
             .font(.system(size: 11, weight: .medium, design: .rounded))
@@ -73,7 +73,7 @@ public struct ImageLabelView<RightView: View>: View {
     }
     .animation(.easeInOut, value: multiValue)
     .frame(minHeight: 60)
-    .padding(.horizontal, 16)
+    .padding(.horizontal, 12)
     .background(cardBGColor)
     .clip(radius: 16, corners: self.corners)
   }

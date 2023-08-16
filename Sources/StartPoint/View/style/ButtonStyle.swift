@@ -19,3 +19,9 @@ public struct ShrunkButton: ButtonStyle {
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
   }
 }
+
+public extension ButtonStyle {
+  static func shrunk(_ factor: CGFloat = 0.98) -> some ButtonStyle {
+    ShrunkButton(factor: factor)
+  }
+}

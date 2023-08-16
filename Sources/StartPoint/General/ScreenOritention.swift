@@ -49,7 +49,7 @@ public enum OritentionMode: Int {
     let supportMode = oritentionMode.toSystemMode
     UIDevice.current.setValue(supportMode.toUIInterfaceOrientation.rawValue, forKey: "orientation")
     UIViewController.attemptRotationToDeviceOrientation()
-    log(tag: "onRotate", "update current support Mode to: \(supportMode), oritentionMode: \(oritentionMode)")
+//    log(tag: "onRotate", "update current support Mode to: \(supportMode), oritentionMode: \(oritentionMode)")
     runInMain(delay: 50) {
       if oritentionMode == .auto {
         let isPortrait = !UIDevice.current.orientation.isLandscape
@@ -87,10 +87,10 @@ public extension OritentionMode {
     } else {
 //      result = GlobalState.shared.rootWindow?.windowScene?.interfaceOrientation.isPortrait
       if result == nil {
-        log("UIApplication.shared.currentScene?.interfaceOrientation is nil")
+//        log("UIApplication.shared.currentScene?.interfaceOrientation is nil")
         let deviceOrientation = UIDevice.current.orientation
         result = !deviceOrientation.isLandscape
-        log("final isLandscape: \(deviceOrientation.isLandscape), isPortrait: \(deviceOrientation.isPortrait), deviceOrientation: \(deviceOrientation)")
+//        log("final isLandscape: \(deviceOrientation.isLandscape), isPortrait: \(deviceOrientation.isPortrait), deviceOrientation: \(deviceOrientation)")
       }
     }
     return result!

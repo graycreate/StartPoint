@@ -83,10 +83,10 @@ struct RoundedEdgeModifier: ViewModifier {
         .overlay(Circle().stroke(color, lineWidth: width))
     } else {
       content
-//        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+      //        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .clipShape(ClipCornerShape(radius: cornerRadius, corners: corners))
         .overlay {
-//          RoundedRectangle(cornerRadius: cornerRadius)
+          //          RoundedRectangle(cornerRadius: cornerRadius)
           ClipCornerShape(radius: cornerRadius, corners: corners)
             .stroke(color, lineWidth: width)
             .padding(0)
@@ -179,7 +179,7 @@ public extension View {
     frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
   }
   
-  public func visualBlur(alpha: CGFloat = 1.0, bg: Color = .clear) -> some View {
+  public func visualBlur(alpha: CGFloat = 1.0, bg: Color = .clear, style: UIBlurEffect.Style = .systemMaterial) -> some View {
     return self.background(VEBlur(bg: bg).opacity(alpha))
   }
   
@@ -188,10 +188,10 @@ public extension View {
   }
   
   public func clip(radius: CGFloat = -1,
-                           corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight],
-                           strokeSize: CGFloat = 1,
-                           strokeColor: Color = Color.border
-                           ) -> some View {
+                   corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight],
+                   strokeSize: CGFloat = 1,
+                   strokeColor: Color = Color.border
+  ) -> some View {
     self.modifier(RoundedEdgeModifier(radius: radius, corners: corners,
                                       width: strokeSize, color: strokeColor))
   }
@@ -262,12 +262,12 @@ public extension View {
   }
   
   
-//  func hapticOnTap(style: UIImpactFeedbackGenerator.FeedbackStyle = .light) -> some View {
-//    self.onTapGesture {
-//      let impact = UIImpactFeedbackGenerator(style: style)
-//      impact.impactOccurred()
-//    }
-//  }
+  //  func hapticOnTap(style: UIImpactFeedbackGenerator.FeedbackStyle = .light) -> some View {
+  //    self.onTapGesture {
+  //      let impact = UIImpactFeedbackGenerator(style: style)
+  //      impact.impactOccurred()
+  //    }
+  //  }
 }
 
 //struct EmptyView: View {
@@ -281,27 +281,34 @@ public extension LocalizedStringKey {
 }
 
 public extension View {
-  func to<Destination: View>(if: Binding<Bool>? = nil, @ViewBuilder destination: () -> Destination) -> some View {
-    self.modifier(NavigationLinkModifider(if: `if`, destination: destination()))
+  func to<Destination: View>(if: Binding<Bool>? = nil, @ViewBuilder destination: () -> Destination, action: (()->Void)? = nil) -> some View {
+    self.modifier(NavigationLinkModifider(if: `if`, action: action, destination: destination()))
   }
 }
 
 struct NavigationLinkModifider<Destination: View>: ViewModifier {
   var `if`: Binding<Bool>?
+  let action: (()->Void)?
   let destination: Destination
   
   func body(content: Content) -> some View {
-    if `if` == nil {
-      NavigationLink {
-        destination
-      } label: {
-        content
-      }
-    } else {
-      NavigationLink(destination: destination, isActive: `if`!) {
-        EmptyView()
+    Group {
+      if `if` == nil {
+        NavigationLink {
+          destination
+        } label: {
+          content
+        }
+      } else {
+        NavigationLink(destination: destination, isActive: `if`!) {
+          EmptyView()
+        }
       }
     }
+    .simultaneousGesture(TapGesture().onEnded {
+      self.action?()
+    })
+    
   }
 }
 
@@ -329,23 +336,18 @@ struct HostingWindowFinder: UIViewRepresentable {
 
 
 public extension View {
-  func foregroundLinearGradient(
-    colors: [Color],
-    startPoint: UnitPoint,
-    endPoint: UnitPoint) -> some View
+  func colorful(
+    colors: [Color] = [.titleGradStartColor, .titleGradEndColor],
+    startPoint: UnitPoint = .leading,
+    endPoint: UnitPoint = .trailing) -> some View
   {
-    self.overlay {
-      
+    self.foregroundStyle (
       LinearGradient(
         colors: colors,
         startPoint: startPoint,
         endPoint: endPoint
       )
-      .mask(
-        self
-        
-      )
-    }
+    )
   }
 }
 
@@ -372,7 +374,7 @@ struct EmptyModifier: ViewModifier {
 
 public extension View {
   func viewBorder(color: Color = .black, radius: CGFloat = 1, hide: Bool = false) -> some View {
-//    return self
+    //    return self
     return self.modifier(ViewBorderModifier(color: color, radius: radius, hide: hide))
   }
   
@@ -396,12 +398,12 @@ extension Text {
 // call our action
 struct DeviceRotationViewModifier: ViewModifier {
   let action: (Bool) -> Void
-
+  
   func body(content: Content) -> some View {
     content
       .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
         guard let scene = UIApplication.shared.currentScene else {
-          log(tag: "onRotate", "guard let scene = UIApplication.shared.currentScene")
+//          log(tag: "onRotate", "guard let scene = UIApplication.shared.currentScene")
           return
         }
         var isPortrait = scene.interfaceOrientation.isPortrait
@@ -431,37 +433,68 @@ extension UIApplication {
 
 
 struct AdaptsToKeyboard: ViewModifier {
-    @State var currentHeight: CGFloat = 0
-    
-    func body(content: Content) -> some View {
-        GeometryReader { geometry in
-            content
-                .padding(.bottom, self.currentHeight)
-                .onAppear(perform: {
-                    NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillShowNotification)
-                        .merge(with: NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillChangeFrameNotification))
-                        .compactMap { notification in
-                            withAnimation(.easeOut(duration: 0.16)) {
-                                notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-                            }
-                    }
-                    .map { rect in
-                        rect.height - geometry.safeAreaInsets.bottom
-                    }
-                    .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
-                    
-                    NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillHideNotification)
-                        .compactMap { notification in
-                            CGFloat.zero
-                    }
-                    .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
-                })
-        }
+  @State var currentHeight: CGFloat = 0
+  
+  func body(content: Content) -> some View {
+    GeometryReader { geometry in
+      content
+        .padding(.bottom, self.currentHeight)
+        .onAppear(perform: {
+          NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillShowNotification)
+            .merge(with: NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillChangeFrameNotification))
+            .compactMap { notification in
+              withAnimation(.easeOut(duration: 0.16)) {
+                notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
+              }
+            }
+            .map { rect in
+              rect.height - geometry.safeAreaInsets.bottom
+            }
+            .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
+          
+          NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillHideNotification)
+            .compactMap { notification in
+              CGFloat.zero
+            }
+            .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
+        })
     }
+  }
 }
 
 public extension View {
-    func adaptsToKeyboard() -> some View {
-        return modifier(AdaptsToKeyboard())
+  func adaptsToKeyboard() -> some View {
+    return modifier(AdaptsToKeyboard())
+  }
+}
+
+
+// @available(iOS 13.4, *) - needed for iOS
+struct Draggable<Preview: View>: ViewModifier {
+  let condition: Bool
+  let data: () -> NSItemProvider
+  let preview: Preview
+  
+  init(condition: Bool, data: @escaping () -> NSItemProvider, preview: Preview) {
+    self.condition = condition
+    self.data = data
+    self.preview = preview
+  }
+  
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if condition {
+      content.onDrag(data)
+    } else {
+      content
     }
+  }
+}
+
+// @available(iOS 13.4, *) - needed for iOS
+public extension View {
+  func drag<V>(if condition: Bool, _ data: @escaping () -> NSItemProvider, @ViewBuilder preview: () -> V)
+        -> some View where V : View {
+    self.modifier(Draggable(condition: condition, data: data, preview: preview()))
+  }
 }

@@ -11,7 +11,7 @@ class RootHostingController<Content: View>: UIHostingController<Content> {
   
   override var prefersHomeIndicatorAutoHidden: Bool {
     let autoHide = GeneralState.shared.autoHideIndicator
-    log("autoHide HomeIndicator: \(autoHide)")
+//    log("autoHide HomeIndicator: \(autoHide)")
     return autoHide
   }
   
