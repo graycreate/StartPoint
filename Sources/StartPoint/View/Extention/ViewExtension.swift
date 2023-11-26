@@ -179,8 +179,8 @@ public extension View {
     frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
   }
   
-  public func visualBlur(alpha: CGFloat = 1.0, bg: Color = .clear, style: UIBlurEffect.Style = .systemMaterial) -> some View {
-    return self.background(VEBlur(bg: bg).opacity(alpha))
+  public func visualBlur(style: UIBlurEffect.Style = .systemMaterial, color: Color = .clear, alpha: CGFloat = 1.0) -> some View {
+    return self.background(VEBlur(style: style, bg: color, alpha: alpha))
   }
   
   func forceClickable() -> some View {

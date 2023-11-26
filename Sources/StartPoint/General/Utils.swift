@@ -14,146 +14,152 @@ import SwiftUI
 private let loggable: Bool = true
 public let TAG = "DEBUG_TAG: "
 
-public func log(tag: String = .empty, _ items: Any..., separator: String = " ", terminator: String = "\n") {
-    if !loggable {
-        return
-    }
+public func log(tag: String = .empty, _ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file) {
+  if !loggable {
+    return
+  }
 #if DEBUG
-    print(TAG + tag, items, separator, terminator)
+  let filename = (file as NSString).lastPathComponent
+  var finalTag = tag
+  if finalTag.isEmpty {
+    finalTag = filename
+  }
+  print(TAG + finalTag, items, separator, terminator)
 #endif
 }
 
 
 public func isSimulator() -> Bool {
 #if (arch(i386) || arch(x86_64)) && os(iOS)
-    return true
+  return true
 #endif
-    return false
+  return false
 }
 
 
 
 /// Publisher to read keyboard changes.
 protocol KeyboardReadable {
-    var keyboardPublisher: AnyPublisher<Bool, Never> { get }
+  var keyboardPublisher: AnyPublisher<Bool, Never> { get }
 }
 
 extension KeyboardReadable {
-    var keyboardPublisher: AnyPublisher<Bool, Never> {
-        Publishers.Merge(
-            NotificationCenter.default
-                .publisher(for: UIResponder.keyboardWillShowNotification)
-                .map { _ in true },
-            
-            NotificationCenter.default
-                .publisher(for: UIResponder.keyboardWillHideNotification)
-                .map { _ in false }
-        )
-            .eraseToAnyPublisher()
-    }
+  var keyboardPublisher: AnyPublisher<Bool, Never> {
+    Publishers.Merge(
+      NotificationCenter.default
+        .publisher(for: UIResponder.keyboardWillShowNotification)
+        .map { _ in true },
+      
+      NotificationCenter.default
+        .publisher(for: UIResponder.keyboardWillHideNotification)
+        .map { _ in false }
+    )
+    .eraseToAnyPublisher()
+  }
 }
 
-
-public func runInMain(delay: Double = 0, execute work: @escaping @convention(block) () -> Void) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(delay)), execute: work)
+@discardableResult
+public func runInMain(delay: Double = 0, execute work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
+  let workItem = DispatchWorkItem { work() }
+  DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(delay)), execute: workItem)
+  return workItem
 }
 
-public func delay(_ duration: Double = 2, _ work: @escaping @convention(block) () -> Void) {
-    runInMain(delay: duration, execute: work)
+@discardableResult
+public func delay(_ duration: Double = 2, _ work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
+  return runInMain(delay: duration, execute: work)
 }
 
 public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .soft) {
-    let impactHeavy = UIImpactFeedbackGenerator(style: style)
-    impactHeavy.impactOccurred()
+  let impactHeavy = UIImpactFeedbackGenerator(style: style)
+  impactHeavy.impactOccurred()
 }
 
-
-
 public func notEmpty(_ strs: String?...) -> Bool {
-    for str in strs {
-        if let str = str {
-            if str.isEmpty { return false }
-        } else { return false }
-    }
-    return true
+  for str in strs {
+    if let str = str {
+      if str.isEmpty { return false }
+    } else { return false }
+  }
+  return true
 }
 
 extension URL {
-    init?(_ url: String) {
-        self.init(string: url)
-    }
-
-    public func start() {
-        UIApplication.shared.openURL(self)
-    }
+  init?(_ url: String) {
+    self.init(string: url)
+  }
+  
+  public func start() {
+    UIApplication.shared.openURL(self)
+  }
 }
 
 extension String {
-    public func openURL() {
-        let url = self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        URL(string: url)?.start()
-    }
+  public func openURL() {
+    let url = self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+    URL(string: url)?.start()
+  }
 }
 
 struct MailHelper {
+  
+  static public func createEmailUrl(subject: String, body: String, to: String) -> URL? {
+    let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+    let bodyEncoded = body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
     
-    static public func createEmailUrl(subject: String, body: String, to: String) -> URL? {
-        let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-        let bodyEncoded = body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-
-        let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
-        let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
-        let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
-        let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
-        let defaultUrl = URL(string: "mailto:\(to)?subject=\(subjectEncoded)&body=\(bodyEncoded)")
-
-        if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
-            return gmailUrl
-        } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
-            return outlookUrl
-        } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
-            return yahooMail
-        } else if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
-            return sparkUrl
-        }
-
-        return defaultUrl
+    let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+    let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
+    let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+    let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
+    let defaultUrl = URL(string: "mailto:\(to)?subject=\(subjectEncoded)&body=\(bodyEncoded)")
+    
+    if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
+      return gmailUrl
+    } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
+      return outlookUrl
+    } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
+      return yahooMail
+    } else if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
+      return sparkUrl
     }
-
+    
+    return defaultUrl
+  }
+  
 }
 
 public extension Bundle {
-
-    var shortVersion: String {
-        if let result = infoDictionary?["CFBundleShortVersionString"] as? String {
-            return result
-        } else {
-            assert(false)
-            return ""
-        }
+  
+  var shortVersion: String {
+    if let result = infoDictionary?["CFBundleShortVersionString"] as? String {
+      return result
+    } else {
+      assert(false)
+      return ""
     }
-
-    var buildVersion: String {
-        if let result = infoDictionary?["CFBundleVersion"] as? String {
-            return result
-        } else {
-            assert(false)
-            return ""
-        }
+  }
+  
+  var buildVersion: String {
+    if let result = infoDictionary?["CFBundleVersion"] as? String {
+      return result
+    } else {
+      assert(false)
+      return ""
     }
-
-    var fullVersion: String {
-        return "\(shortVersion) (\(buildVersion))"
-    }
+  }
+  
+  var fullVersion: String {
+    return "\(shortVersion) (\(buildVersion))"
+  }
 }
 
 public func bundleID() -> String {
-    Bundle.main.bundleIdentifier!
+  Bundle.main.bundleIdentifier!
 }
 
 public extension String {
-    var prefKey: String {
-        bundleID() + "." + self
-    }
+  var prefKey: String {
+    bundleID() + "." + self
+  }
 }
 

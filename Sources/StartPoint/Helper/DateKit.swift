@@ -37,5 +37,9 @@ public extension Date {
   var expired: Bool {
     Date.now > self
   }
+}
+
+
+public struct DateKit {
   
 }

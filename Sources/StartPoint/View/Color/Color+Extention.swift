@@ -111,9 +111,11 @@ public extension Color {
     self.hsba.a
   }
   
-  mutating func changeHSB(hue: CGFloat? = nil, s: CGFloat? = nil, b: CGFloat? = nil, a: CGFloat? = nil) {
+  @discardableResult
+  mutating func changeHSB(hue: CGFloat? = nil, s: CGFloat? = nil, b: CGFloat? = nil, a: CGFloat? = nil) -> Color {
     let hsba = self.hsba
     self = .hsb(hue ?? hsba.h, s: s ?? hsba.s, b: b ?? hsba.b, a: a ?? hsba.a)
+    return self
   }
   
 }

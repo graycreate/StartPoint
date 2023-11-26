@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-public struct BottomSheetView<Content: View, AnchorView: View>: View {
+public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>: View {
   @Binding var isShowing: Bool
-  let title: String
+  var titleView: TitleView
   var content: Content
   let anchorView: AnchorView
   
   
-  init(isShowing: Binding<Bool>, title: String, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
+  public init(isShowing: Binding<Bool>, @ViewBuilder titleView: ()-> TitleView, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
     self._isShowing = isShowing
-    self.title = title
+    self.titleView = titleView()
     self.content = content()
     self.anchorView = anchorView
   }
@@ -24,9 +24,11 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
   public var body: some View {
     ZStack(alignment: .bottom) {
       self.anchorView
-      self.dimView
         .zIndex(0)
       if (isShowing) {
+      self.dimView
+        .transition(.opacity.animation(.easeInOut(duration: 0.3)))
+        .zIndex(1)
         VStack(spacing: 14) {
           self.titleBarView
           self.content
@@ -34,13 +36,12 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
         }
         .padding(30)
         .padding(.top, 0)
-//        .background(.ultraThickMaterial) // Toggle issue, untint color invisiable
-        .visualBlur(bg: .white.dark(.black).opacity(0.5), style: .systemThickMaterial)
+        .visualBlur(style: .systemThickMaterial, color: .white.dark(.black).opacity(0.5))
         .clip(radius: 38)
         .padding(.horizontal, 12)
         .padding(.bottom, 26)
         .transition(.move(edge: .bottom))
-        .zIndex(1)
+        .zIndex(2)
       }
     }
     .ignoresSafeArea()
@@ -50,7 +51,7 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
   @ViewBuilder
   private var titleBarView: some View {
     HStack(alignment: .top) {
-      SheetTitle(self.title)
+      self.titleView
       Spacer()
       Button {
         dismiss()
@@ -83,7 +84,7 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
   }
   
   private var dimView: some View {
-    Color.black.opacity(isShowing ? 0.4 : 0.0)
+    Color.black.opacity(0.4)
       .ignoresSafeArea()
       .onTapGesture {
         dismiss()
@@ -99,9 +100,14 @@ public struct BottomSheetView<Content: View, AnchorView: View>: View {
 }
 
 public extension View {
-  func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: String, @ViewBuilder content: ()-> Content) -> BottomSheetView<Content, Self> {
-    BottomSheetView(isShowing: isShowing, title: title, content: content, anchorView: self)
+  func bottomSheet<TitleView: View, Content: View>(isShowing: Binding<Bool>, titleView: ()-> TitleView, @ViewBuilder content: ()-> Content) -> BottomSheetView<TitleView, Content, Self> {
+    BottomSheetView(isShowing: isShowing, titleView: titleView, content: content, anchorView: self)
   }
+  
+  func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: String, @ViewBuilder content: @escaping () -> Content) -> some View {
+      BottomSheetView(isShowing: isShowing, titleView: { SheetTitle(title) }, content: content, anchorView: self)
+  }
+  
 }
 
 private struct SheetTitle: View {

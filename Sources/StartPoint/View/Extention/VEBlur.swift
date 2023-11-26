@@ -11,16 +11,20 @@ import SwiftUI
 
 struct VEBlur: UIViewRepresentable {
   var style: UIBlurEffect.Style = .systemMaterial
-    var bg: Color = .clear
+  var bg: Color = .clear
+  var alpha: CGFloat = 1.0
 
     func makeUIView(context: Context) -> UIVisualEffectView {
         let effectView = UIVisualEffectView(effect: UIBlurEffect(style: style))
-        effectView.backgroundColor = bg.uiColor
+      effectView.backgroundColor = bg.uiColor
+      effectView.alpha = self.alpha
         return effectView
     }
 
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         uiView.effect = UIBlurEffect(style: style)
+        uiView.backgroundColor = bg.uiColor
+        uiView.alpha = self.alpha
     }
     
     // mark: bug here
