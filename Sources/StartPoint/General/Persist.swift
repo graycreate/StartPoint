@@ -8,13 +8,18 @@
 import Foundation
 
 public struct Persist {
-  private static let userDefault = UserDefaults.standard
+  public static let standard = Persist(userDefault: UserDefaults.standard)
+  public var userDefault: UserDefaults
   
-  public static func save(value: Any, forkey key: String) {
+  public init(userDefault: UserDefaults) {
+    self.userDefault = userDefault
+  }
+  
+  public func save(value: Any, forkey key: String) {
     userDefault.set(value, forKey: key)
   }
   
-  public static func read(key: String, default: String = .empty) -> String {
+  public func read(key: String, default: String = .empty) -> String {
     if userDefault.object(forKey: key) == nil {
       save(value: `default`, forkey: key)
       return `default`
@@ -22,7 +27,7 @@ public struct Persist {
     return userDefault.string(forKey: key) ?? `default`
   }
   
-  public static func read(key: String, default: Int = 0) -> Int {
+  public func read(key: String, default: Int = 0) -> Int {
     if userDefault.object(forKey: key) == nil {
       save(value: `default`, forkey: key)
       return `default`
@@ -30,7 +35,7 @@ public struct Persist {
     return userDefault.integer(forKey: key)
   }
   
-  public static func read(key: String, default: Bool = false) -> Bool {
+  public func read(key: String, default: Bool = false) -> Bool {
     if userDefault.object(forKey: key) == nil {
       save(value: `default`, forkey: key)
       return `default`
@@ -38,7 +43,7 @@ public struct Persist {
     return userDefault.bool(forKey: key)
   }
   
-  public static func read(key: String) -> Data? {
+  public func read(key: String) -> Data? {
     return userDefault.data(forKey: key)
   }
 }

@@ -3,7 +3,7 @@
 //  V2er
 //
 //  Created by Seth on 2021/7/9.
-//  Copyright © 2021 lessmore.io. All rights reserved.
+//  Copyright © 2021 daystill.app. All rights reserved.
 //
 
 import Foundation
@@ -211,5 +211,18 @@ public extension UIDevice {
                                bottom: defaultInsetBottom, right: 0)
     //    print("insets: \(result)")
     return result;
+  }
+  
+  
+}
+
+public extension UIWindow? {
+  var displayCornerRadius: CGFloat {
+    var radius: CGFloat = 53.0
+    if let screen = self?.screen {
+      radius = screen.value(forKey: "_displayCornerRadius") as? CGFloat ?? radius
+    }
+    log("radius result: \(radius)")
+    return radius
   }
 }

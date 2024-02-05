@@ -20,8 +20,14 @@ public struct ShrunkButton: ButtonStyle {
   }
 }
 
+//public extension ButtonStyle {
+// static var shrunkk: any ButtonStyle { ShrunkButton() }
+//}
+
 public extension ButtonStyle {
   static func shrunk(_ factor: CGFloat = 0.98) -> some ButtonStyle {
     ShrunkButton(factor: factor)
   }
 }
+
+//public let shrunkenButtonStyle: any ButtonStyle = ShrunkButton()

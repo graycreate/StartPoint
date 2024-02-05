@@ -3,7 +3,7 @@
 //  V2er
 //
 //  Created by Seth on 2021/7/4.
-//  Copyright © 2021 lessmore.io. All rights reserved.
+//  Copyright © 2021 daystill.app. All rights reserved.
 //
 
 import Foundation
@@ -58,16 +58,26 @@ extension KeyboardReadable {
   }
 }
 
+/// /// duration: Millisecond to delay, defaut is 5 ms, animation if not nil, will run with animation
 @discardableResult
-public func runInMain(delay: Double = 0, execute work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
-  let workItem = DispatchWorkItem { work() }
+public func runInMain(delay: Double = 0, animation: Animation? = nil, execute work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
+  let workItem = DispatchWorkItem {
+    if animation != nil {
+      withAnimation(animation) {
+        work()
+      }
+    } else {
+      work()
+    }
+  }
   DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(delay)), execute: workItem)
   return workItem
 }
 
+/// duration: Millisecond to delay, defaut is 5 ms
 @discardableResult
-public func delay(_ duration: Double = 2, _ work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
-  return runInMain(delay: duration, execute: work)
+public func delay(_ duration: Double = 5, with animation: Animation? = nil, _ work: @escaping @convention(block) () -> Void) -> DispatchWorkItem {
+  return runInMain(delay: duration, animation: animation, execute: work)
 }
 
 public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .soft) {
@@ -151,15 +161,18 @@ public extension Bundle {
   var fullVersion: String {
     return "\(shortVersion) (\(buildVersion))"
   }
+  
+   static func bundleID() -> String {
+    Bundle.main.bundleIdentifier!
+  }
+  
 }
 
-public func bundleID() -> String {
-  Bundle.main.bundleIdentifier!
-}
+
 
 public extension String {
   var prefKey: String {
-    bundleID() + "." + self
+    Bundle.bundleID() + "." + self
   }
 }
 

@@ -44,7 +44,7 @@ public struct NavBar<LeftView, CenterView, RightView, BottomView>: View where Le
 }
 
 public struct NavbarView<Content: View>: View {
-  @EnvironmentObject private var store: GeneralState
+  @EnvironmentObject private var state: GeneralState
   let content: Content
   let paddingH: CGFloat
   let hideDivider: Bool
@@ -57,7 +57,7 @@ public struct NavbarView<Content: View>: View {
   
   public var body: some View {
     VStack(spacing: 0) {
-      Color.clear.frame(height: store.safeArea.top)
+      Color.clear.frame(height: state.safeArea.top)
       HStack(alignment: .center, spacing: 0) {
         self.content
       }
@@ -88,7 +88,7 @@ struct NavBar_Previews: PreviewProvider {
     } bottomView: {
       Text("BottomView")
     }
-    .injectSample()
+    .environmentObject(GeneralState.sample)
   }
 }
 

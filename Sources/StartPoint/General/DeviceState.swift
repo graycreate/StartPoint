@@ -3,7 +3,7 @@
 //  GlobalState
 //
 //  Created by ghui on 2021/9/12.
-//  Copyright © 2021 lessmore.io. All rights reserved.
+//  Copyright © 2021 daystill.app. All rights reserved.
 //
 
 import Foundation

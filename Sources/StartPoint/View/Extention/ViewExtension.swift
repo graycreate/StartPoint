@@ -336,6 +336,7 @@ struct HostingWindowFinder: UIViewRepresentable {
 
 
 public extension View {
+  
   func colorful(
     colors: [Color] = [.titleGradStartColor, .titleGradEndColor],
     startPoint: UnitPoint = .leading,
@@ -380,13 +381,6 @@ public extension View {
   
 }
 
-public extension View {
-  func injectSample(_ store: GeneralState = .sample) -> some View {
-    return self.environmentObject(store)
-  }
-}
-
-
 extension Text {
   public func font(_ size: CGFloat = 17, weight: Font.Weight? = nil, design: Font.Design? = nil) -> Text {
     return self.font(.system(size: size, design: design ?? .default).weight(weight ?? .regular))
@@ -407,7 +401,7 @@ struct DeviceRotationViewModifier: ViewModifier {
           return
         }
         var isPortrait = scene.interfaceOrientation.isPortrait
-        let intMode: Int = Persist.read(key: Prefs.SCREEN_ORITATION_MODE)
+        let intMode: Int = Persist.standard.read(key: Prefs.SCREEN_ORITATION_MODE)
         let screenMode: OritentionMode = OritentionMode.build(from: intMode)
         if screenMode != .auto {
           isPortrait = screenMode == .portrait
@@ -497,4 +491,61 @@ public extension View {
         -> some View where V : View {
     self.modifier(Draggable(condition: condition, data: data, preview: preview()))
   }
+}
+
+public extension Text {
+    init(_ string: String, configure: ((inout AttributedString) -> Void)) {
+        var attributedString = AttributedString(string) /// create an `AttributedString`
+        configure(&attributedString) /// configure using the closure
+        self.init(attributedString) /// initialize a `Text`
+    }
+}
+
+
+// TODO: Move this to StartPoint
+public extension View {
+  public func stroke(color: Color = .white, width: CGFloat = 1) -> some View {
+        modifier(StrokeModifer(strokeSize: width, strokeColor: color))
+    }
+}
+
+struct StrokeModifer: ViewModifier {
+    private let id = UUID()
+    var strokeSize: CGFloat = 1
+    var strokeColor: Color = .blue
+
+    func body(content: Content) -> some View {
+        if strokeSize > 0 {
+            appliedStrokeBackground(content: content)
+        } else {
+            content
+        }
+    }
+
+    private func appliedStrokeBackground(content: Content) -> some View {
+        content
+            .padding(strokeSize*2)
+            .background(
+                Rectangle()
+                    .foregroundColor(strokeColor)
+                    .mask(alignment: .center) {
+                        mask(content: content)
+                    }
+            )
+    }
+
+    func mask(content: Content) -> some View {
+        Canvas { context, size in
+            context.addFilter(.alphaThreshold(min: 0.01))
+            context.drawLayer { ctx in
+                if let resolvedView = context.resolveSymbol(id: id) {
+                    ctx.draw(resolvedView, at: .init(x: size.width/2, y: size.height/2))
+                }
+            }
+        } symbols: {
+            content
+                .tag(id)
+                .blur(radius: strokeSize)
+        }
+    }
 }

@@ -49,6 +49,12 @@ public extension Set where Element: Equatable {
       self.insert(item)
     }
   }
+  
+  mutating func append(_ item: Element) {
+    guard !self.contains(item) else { return }
+    self.insert(item)
+  }
+  
 }
 
 public extension String {

@@ -30,6 +30,7 @@ public extension Color {
     Color(hue: h, saturation: s, brightness: b, opacity: a)
   }
   
+  // TODO: Change to reduce the b value of hsb color space.
   func adaptive(dark: Color? = nil, alpha: CGFloat = 0.85)-> Color {
     Color(self , dark: dark ?? self.opacity(alpha))
   }
@@ -75,16 +76,16 @@ public extension Color {
   
   
   // New Color
-//  static let primaryColor = Color.black.adaptive(dark: .white)
-//  static let secondary = Color.black.adaptive(dark: .white)
-//  static let accent = Color.black.adaptive(dark: .white)
-//  static let accentDisabled = Color.gray.adaptive()
-//  static let deAccent = Color.white.adaptive(dark: .black)
-//  static let adaptiveWhite = Color.white.adaptive()
+  //  static let primaryColor = Color.black.adaptive(dark: .white)
+  //  static let secondary = Color.black.adaptive(dark: .white)
+  //  static let accent = Color.black.adaptive(dark: .white)
+  //  static let accentDisabled = Color.gray.adaptive()
+  //  static let deAccent = Color.white.adaptive(dark: .black)
+  //  static let adaptiveWhite = Color.white.adaptive()
   
   //  static let bg = hex(0xF5F5F5)
   static let bg = hex(0xededed)
-  static let titleGradStartColor = hex(0xEDC72F)
+  static let titleGradStartColor = hex(0xE6B800)
   static let titleGradEndColor = hex(0x45D9D5)
   
   var uiColor: UIColor {
@@ -137,34 +138,34 @@ public extension UIColor {
     dark darkModeColor: @escaping @autoclosure () -> UIColor) {
       self.init { traitCollection in
         switch traitCollection.userInterfaceStyle {
-          case .light:
-            return lightModeColor()
-          case .dark:
-            return darkModeColor()
-          @unknown default:
-            return lightModeColor()
+        case .light:
+          return lightModeColor()
+        case .dark:
+          return darkModeColor()
+        @unknown default:
+          return lightModeColor()
         }
       }
     }
   
   convenience init(_ hex: String, alpha: CGFloat = 1.0) {
-      var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-      
-      if cString.hasPrefix("#") { cString.removeFirst() }
-      
-      if cString.count != 6 {
-        self.init("ff0000") // return red color for wrong hex input
-        return
-      }
-      
-      var rgbValue: UInt64 = 0
-      Scanner(string: cString).scanHexInt64(&rgbValue)
-      
-      self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-                green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-                blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-                alpha: alpha)
+    var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    
+    if cString.hasPrefix("#") { cString.removeFirst() }
+    
+    if cString.count != 6 {
+      self.init("ff0000") // return red color for wrong hex input
+      return
     }
+    
+    var rgbValue: UInt64 = 0
+    Scanner(string: cString).scanHexInt64(&rgbValue)
+    
+    self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+              green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+              blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+              alpha: alpha)
+  }
   
   func color() -> Color {
     return Color(self)
@@ -241,28 +242,91 @@ public struct HSBA {
 }
 
 extension UIColor {
+  
+  func isLight(threshold: Double = 0.5) -> Bool {
+    self.getLightBrightness().0
+  }
+  
   // Whether this color is a light color
-  func isLight(threshold: Float = 0.5) -> Bool {
+  func getLightBrightness(threshold: Double = 0.5) -> (Bool, Double) {
     let originalCGColor = self.cgColor
     // Now we need to convert it to the RGB colorspace. UIColor.white / UIColor.black are greyscale and not RGB.
     // If you don't do this then you will crash when accessing components index 2 below when evaluating greyscale colors.
     let RGBCGColor = originalCGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
     guard let components = RGBCGColor?.components else {
-      return false
+      return (false, 0)
     }
     guard components.count >= 3 else {
-      return false
+      return (false, 0)
     }
     
-    let brightness = Float(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
-    return (brightness > threshold)
+    let brightness = Double(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
+    let isLight = (brightness > threshold)
+    return (isLight, brightness)
   }
+  
+  func relativeLuminance() -> CGFloat {
+    var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+    self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+    
+    let components = [red, green, blue].map { (component: CGFloat) -> CGFloat in
+      return (component <= 0.03928) ? (component / 12.92) : pow((component + 0.055) / 1.055, 2.4)
+    }
+    
+    return 0.2126 * components[0] + 0.7152 * components[1] + 0.0722 * components[2]
+  }
+  
+  func contrastRatio(with color: UIColor) -> CGFloat {
+    let luminance1 = self.relativeLuminance()
+    let luminance2 = color.relativeLuminance()
+    let brighter = max(luminance1, luminance2)
+    let darker = min(luminance1, luminance2)
+    return (brighter + 0.05) / (darker + 0.05)
+  }
+  
+  
+  
 }
 
 extension Color {
-  public func isLight(threshold: Float = 0.5)-> Bool {
+  func isLight(threshold: Double = 0.5)-> Bool {
     self.uiColor.isLight(threshold: threshold)
   }
+  
+  public func adjustedTextColor(minimumContrastRatio: Double = 2) -> Color {
+    // Assume the default text colors are white and black
+    let whiteText: Color = .white
+    let blackText: Color = .black
+    
+    // Calculate the contrast ratio with white and black text
+    let contrastRatioWithWhite = self.uiColor.contrastRatio(with: whiteText.uiColor)
+    let contrastRatioWithBlack = self.uiColor.contrastRatio(with: blackText.uiColor)
+
+    if contrastRatioWithWhite >= minimumContrastRatio {
+      let diff = contrastRatioWithWhite / minimumContrastRatio
+      let opacity = max(0.9, 6 / diff)
+      return whiteText.opacity(opacity)
+    } else if contrastRatioWithBlack >= minimumContrastRatio {
+      let diff = contrastRatioWithBlack / minimumContrastRatio
+      let opacity = max(0.8, 4 / diff)
+      return blackText.opacity(opacity)
+    } else {
+      // If neither color meets the minimum contrast ratio,
+      // return the one with the higher contrast ratio
+      return (contrastRatioWithWhite > contrastRatioWithBlack) ? whiteText : blackText
+    }
+  }
+  
+  
+  public func adjustedTextColor(threshold: Double = 0.5) -> Color {
+    let (isLight, brightness) = self.uiColor.getLightBrightness(threshold: threshold)
+    if isLight {
+      return .black.opacity(1 - brightness * 0.36)
+    } else {
+      return .white.opacity(min (1, brightness * 3))
+    }
+  }
+  
 }
 
 

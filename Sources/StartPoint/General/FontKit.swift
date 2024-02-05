@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 public struct FontKit {
   
@@ -19,7 +20,11 @@ public struct FontKit {
     }
   }
   
-  
 }
 
 
+public extension Font.TextStyle {
+  func rounded() -> Font {
+    Font.system(self, design: .rounded)
+  }
+}

@@ -28,7 +28,7 @@ public enum OritentionMode: Int {
   }
   
  public static var current: OritentionMode {
-   let rawValue: Int = Persist.read(key: Prefs.SCREEN_ORITATION_MODE)
+   let rawValue: Int = Persist.standard.read(key: Prefs.SCREEN_ORITATION_MODE)
     return OritentionMode(rawValue: rawValue)!
   }
   

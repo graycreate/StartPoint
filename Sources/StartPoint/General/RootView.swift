@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+/// ZStack with some extra features
 public struct RootView<Content: View> : View {
   var content: Content
   
@@ -16,23 +17,15 @@ public struct RootView<Content: View> : View {
   }
   
   public var body:some View {
-    EmptyView()
-      .withHostingWindow { window in
-        GeneralState.shared.rootWindow = window
-        window!.rootViewController = RootHostingController(rootView: innerRootView)
-      }
-  }
-  
-  @ViewBuilder
-  var innerRootView: some View {
     ZStack {
       content
-        .onAppear {
-          GeneralState.shared.isPortrait = OritentionMode.isPortraitFromInit
-        }
         .background {
           GeometryReader { geo in
             Color.clear
+              .onAppear {
+                GeneralState.shared.isPortrait = OritentionMode.isPortraitFromInit
+                GeneralState.shared.safeArea = geo.safeAreaInsets
+              }
               .onRotate { isPortrait in
                 runInMain {
                   withAnimation {

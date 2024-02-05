@@ -19,7 +19,7 @@ public enum AppGroup: String {
     case .ulpb:
       return AppGroup.base.rawValue + ".ulpb"
     case .dayStill:
-      return AppGroup.base.rawValue + ".daystill"
+      return "group.app.daystill"
     }
   }
 
