@@ -12,24 +12,28 @@ public struct RichTypewriterView: View {
   var startTyping: Bool? = nil
   var keepBounds: Bool = false
   var hapic: Bool = false
+  var speed: CGFloat = 1.0
   
-  public init(_ attText: AttributedString = " ",
+  public init(_ attText: AttributedString? = " ",
               startTyping: Bool? = nil,
               keepBounds: Bool = false,
-              hapic: Bool = false
+              hapic: Bool = false,
+              speed: CGFloat = 1.0
   ) {
-    self.attText = attText
+    self.attText = attText ?? " "
     self.startTyping = startTyping
-    self.animatedText = attText
+    self.animatedText = attText ?? " "
     self.typingTask = typingTask
     self.keepBounds = keepBounds
     self.hapic = hapic
+    self.speed = speed
   }
   
   public init(_ text: String,
               startTyping: Bool? = nil,
               keepBounds: Bool = false,
-              hapic: Bool = false
+              hapic: Bool = false,
+              speed: CGFloat = 1.0
   ) {
     self.attText = AttributedString(text)
     self.startTyping = startTyping
@@ -37,9 +41,10 @@ public struct RichTypewriterView: View {
     self.typingTask = typingTask
     self.keepBounds = keepBounds
     self.hapic = hapic
+    self.speed = speed
   }
   
-  private let typingDelay: Duration = .milliseconds(50)
+
   @State private var animatedText: AttributedString = " "
   @State private var typingTask: Task<Void, Error>?
   
@@ -93,6 +98,7 @@ public struct RichTypewriterView: View {
           hapticFeedback(.light)
         }
         // Wait
+        let typingDelay: Duration = .milliseconds(80 / self.speed)
         try await Task.sleep(for: typingDelay)
         
         // Advance the index, character by character
@@ -117,7 +123,7 @@ struct RichTypewriterViewPreview: PreviewProvider {
   static var text: AttributedString {
     var attributedString = AttributedString("Hello, Twitter! This is a typewriter animation.")
     let range = attributedString.range(of: "typewriter")!
-    attributedString[range].backgroundColor = .red
+    attributedString[range].foregroundColor = .red
     return attributedString
   }
   @State static var startTyping = false
