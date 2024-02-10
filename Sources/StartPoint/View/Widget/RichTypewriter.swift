@@ -8,25 +8,26 @@
 import SwiftUI
 
 public struct RichTypewriterView: View {
-  let attText: AttributedString
+  var attText: AttributedString
   var startTyping: Bool? = nil
   var keepBounds: Bool = false
   var hapic: Bool = false
   var speed: CGFloat = 1.0
+  let onComplete: () -> Void
   
   public init(_ attText: AttributedString? = " ",
               startTyping: Bool? = nil,
               keepBounds: Bool = false,
               hapic: Bool = false,
-              speed: CGFloat = 1.0
+              speed: CGFloat = 1.0,
+              onComplete: @escaping () -> Void = {}
   ) {
     self.attText = attText ?? " "
     self.startTyping = startTyping
-    self.animatedText = attText ?? " "
-    self.typingTask = typingTask
     self.keepBounds = keepBounds
     self.hapic = hapic
     self.speed = speed
+    self.onComplete = onComplete
   }
   
   public init(_ text: String,
@@ -35,13 +36,7 @@ public struct RichTypewriterView: View {
               hapic: Bool = false,
               speed: CGFloat = 1.0
   ) {
-    self.attText = AttributedString(text)
-    self.startTyping = startTyping
-    self.animatedText = attText
-    self.typingTask = typingTask
-    self.keepBounds = keepBounds
-    self.hapic = hapic
-    self.speed = speed
+    self.init(AttributedString(text), startTyping: startTyping, keepBounds: keepBounds, hapic: hapic, speed: speed)
   }
   
 
@@ -103,6 +98,9 @@ public struct RichTypewriterView: View {
         
         // Advance the index, character by character
         index = animatedText.index(afterCharacter: index)
+      }
+      delay {
+        self.onComplete()
       }
     }
   }
