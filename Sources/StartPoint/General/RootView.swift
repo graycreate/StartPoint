@@ -39,6 +39,7 @@ public struct RootView<Content: View> : View {
         }
     }
     .environmentObject(GeneralState.shared)
+    .environmentObject(NetworkMonitor.shared)
   }
   
 }
