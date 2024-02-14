@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct RichTypewriterView: View {
+public struct TypewriterView: View {
   var attText: AttributedString
   var startTyping: Bool? = nil
   var keepBounds: Bool = false
@@ -117,7 +117,7 @@ public struct RichTypewriterView: View {
 }
 
 // Usage example
-struct RichTypewriterViewPreview: PreviewProvider {
+struct TypewriterViewPreview: PreviewProvider {
   static var text: AttributedString {
     var attributedString = AttributedString("Hello, Twitter! This is a typewriter animation.")
     let range = attributedString.range(of: "typewriter")!
@@ -129,7 +129,7 @@ struct RichTypewriterViewPreview: PreviewProvider {
   static var previews: some View {
     VStack {
       Text(self.text)
-      RichTypewriterView(text, startTyping: nil)
+      TypewriterView(text, startTyping: nil)
         .font(.title)
         .padding()
         .forceClickable()
