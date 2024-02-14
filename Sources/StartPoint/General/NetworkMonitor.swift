@@ -11,7 +11,7 @@ import Network
 public class NetworkMonitor: ObservableObject {
     private let networkMonitor = NWPathMonitor()
     private let workerQueue = DispatchQueue(label: "Monitor")
-    var isConnected = false
+    public var isConnected = false
 
     private init() {
         networkMonitor.pathUpdateHandler = { path in
@@ -25,6 +25,6 @@ public class NetworkMonitor: ObservableObject {
         networkMonitor.start(queue: workerQueue)
     }
   
-  static let shared = NetworkMonitor()
+ public static let shared = NetworkMonitor()
   
 }
