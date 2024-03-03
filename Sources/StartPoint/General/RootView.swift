@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 /// ZStack with some extra features
+/// RootView should contain all views in the app,
+/// otherwise the injected env objects will not work
 public struct RootView<Content: View> : View {
   var content: Content
   

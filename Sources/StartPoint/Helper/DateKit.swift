@@ -37,6 +37,21 @@ public extension Date {
   var expired: Bool {
     Date.now > self
   }
+  
+  var timeStamp: Int {
+    Int(self.timeIntervalSince1970 * 1000)
+  }
+  
+  static var currentTimeStamp: Int64 {
+    return Int64(Date().timeIntervalSince1970 * 1000)
+  }
+  
+  static var printTime: String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+    return dateFormatter.string(from: Date.now)
+  }
+  
 }
 
 public struct DateKit {

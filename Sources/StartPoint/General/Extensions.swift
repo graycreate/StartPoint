@@ -55,6 +55,10 @@ public extension Set where Element: Equatable {
     self.insert(item)
   }
   
+//  mutating func update(_ item: Element) {
+//    self.append(item)
+//  }
+  
 }
 
 public extension String {
@@ -256,13 +260,6 @@ public extension Data {
         return String(decoding: self, as: UTF8.self)
     }
 }
-
-public extension Date {
-    static var currentTimeStamp: Int64 {
-        return Int64(Date().timeIntervalSince1970 * 1000)
-    }
-}
-
 
 public extension UIFont {
     static func prfered(_ font: Font) -> UIFont {

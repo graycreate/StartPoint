@@ -12,3 +12,12 @@ public extension ArraySlice {
         return Array(self)
     }
 }
+
+public extension Array where Element: Equatable {
+  func random(excluding excludedElements: Element...) -> Element? {
+    let filteredElements = self.filter { !excludedElements.contains($0) }
+    guard !filteredElements.isEmpty else { return nil }
+    return filteredElements.randomElement()
+  }
+}
+

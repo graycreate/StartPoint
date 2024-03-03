@@ -9,12 +9,13 @@ import SwiftUI
 
 public struct ShrunkButton: ButtonStyle {
   let factor: CGFloat
-  public init(factor: CGFloat = 0.98) {
+  public init(factor: CGFloat = 0.95) {
     self.factor = factor
   }
   
   public func makeBody(configuration: Configuration) -> some View {
     configuration.label
+      .opacity(configuration.isPressed ? 1 : 1)
       .scaleEffect(configuration.isPressed ? factor : 1)
       .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
   }

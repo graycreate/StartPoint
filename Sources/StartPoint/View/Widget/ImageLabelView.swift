@@ -87,7 +87,7 @@ public struct ImageLabelView<RightView: View>: View {
     }
   }
   
-  fileprivate let cardBGColor = Color.white.adaptive(dark: .gray.opacity(0.1))
+  fileprivate let cardBGColor = Color.white.adaptive(night: .gray.opacity(0.1))
   
   public enum SectionItemType {
     case top, middle, bottom, single

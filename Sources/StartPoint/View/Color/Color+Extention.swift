@@ -26,17 +26,31 @@ public extension Color {
     return Color(hex, a: alpha)
   }
   
-  static func hsb(_ h: CGFloat, s: CGFloat = 0.5, b: CGFloat = 1.0, a: CGFloat = 1.0) -> Color {
+  static func hsb(_ h: CGFloat, _ s: CGFloat = 0.5, _ b: CGFloat = 1.0, a: CGFloat = 1.0) -> Color {
     Color(hue: h, saturation: s, brightness: b, opacity: a)
   }
   
-  // TODO: Change to reduce the b value of hsb color space.
-  func adaptive(dark: Color? = nil, alpha: CGFloat = 0.85)-> Color {
-    Color(self , dark: dark ?? self.opacity(alpha))
+  /// Scale the brightness of the color
+  func scale(b factor: CGFloat) -> Color {
+    let newB = self.hsba.b * factor
+    return Color(hue: self.hsba.h, saturation: self.hsba.s, brightness: newB, opacity: self.hsba.a)
   }
   
-  func dark(_ color: Color? = nil, alpha: CGFloat = 0.85) -> Color {
-    self.adaptive(dark: color, alpha: alpha)
+  func darker(b: CGFloat = 0.95) -> Color {
+    self.scale(b: b)
+  }
+  
+  func lighter() -> Color {
+    self.scale(b: 1.1)
+  }
+  
+  // TODO: Change to reduce the b value of hsb color space.
+  func adaptive(night: Color? = nil, alpha: CGFloat = 0.85)-> Color {
+    Color(self , dark: night ?? self.opacity(alpha))
+  }
+  
+  func night(_ color: Color? = nil, alpha: CGFloat = 0.85) -> Color {
+    self.adaptive(night: color, alpha: alpha)
   }
   
   func shape(_ hex: Int, alpha: CGFloat = 1.0) -> some View {
@@ -49,7 +63,8 @@ public extension Color {
   }
   
   static let floatButtonBg = Color(.hex(0xffffff, alpha: 0.45) , dark: .hex(0x000000, alpha: 0.25))
-  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(dark: .hex(0x212121))
+//  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
+  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
   static let lightGray = hex(0xF5F5F5)
   static let almostClear = hex(0xFFFFFF, alpha: 0.000001)
   static let debugColor = hex(0xFF0000, alpha: 0.1)
@@ -115,7 +130,7 @@ public extension Color {
   @discardableResult
   mutating func changeHSB(hue: CGFloat? = nil, s: CGFloat? = nil, b: CGFloat? = nil, a: CGFloat? = nil) -> Color {
     let hsba = self.hsba
-    self = .hsb(hue ?? hsba.h, s: s ?? hsba.s, b: b ?? hsba.b, a: a ?? hsba.a)
+    self = .hsb(hue ?? hsba.h, s ?? hsba.s, b ?? hsba.b, a: a ?? hsba.a)
     return self
   }
   
@@ -318,14 +333,14 @@ extension Color {
   }
   
   
-  public func adjustedTextColor(threshold: Double = 0.5) -> Color {
-    let (isLight, brightness) = self.uiColor.getLightBrightness(threshold: threshold)
-    if isLight {
-      return .black.opacity(1 - brightness * 0.36)
-    } else {
-      return .white.opacity(min (1, brightness * 3))
-    }
-  }
+//  public func adjustedTextColor(threshold: Double = 0.5) -> Color {
+//    let (isLight, brightness) = self.uiColor.getLightBrightness(threshold: threshold)
+//    if isLight {
+//      return .black.opacity(1 - brightness * 0.36)
+//    } else {
+//      return .white.opacity(min (1, brightness * 3))
+//    }
+//  }
   
 }
 

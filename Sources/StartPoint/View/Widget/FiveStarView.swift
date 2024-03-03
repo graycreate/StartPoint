@@ -19,8 +19,6 @@ public struct FiveStarView: View {
     HStack(spacing: 0) {
       ForEach (0..<count) { index in
         Image(systemName: "star.fill")
-          .font(.callout)
-          .foregroundColor(color ?? Color.accentColor)
       }
     }
   }

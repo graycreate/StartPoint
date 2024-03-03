@@ -80,7 +80,7 @@ public func delay(_ duration: Double = 5, with animation: Animation? = nil, _ wo
   return runInMain(delay: duration, animation: animation, execute: work)
 }
 
-public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .soft) {
+public func hapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
   let impactHeavy = UIImpactFeedbackGenerator(style: style)
   impactHeavy.impactOccurred()
 }

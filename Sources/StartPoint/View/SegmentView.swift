@@ -44,7 +44,7 @@ public struct SegmentedView: View  {
       .padding(extraPadding)
       .background {
         Color.hex(0x767680, alpha: 0.08)
-          .dark(.hex(0x767680, alpha: 0.24))
+          .night(.hex(0x767680, alpha: 0.24))
       }
       .clipCorner(corner)
     }
@@ -71,7 +71,7 @@ fileprivate struct ItemView: View {
       .frame(width: self.width)
       .background {
         if isSelected {
-          Color.white.dark(.hex(0x636366))
+          Color.white.night(.hex(0x636366))
             .clipCorner(self.corner)
             .matchedGeometryEffect(id: "item", in: namespace)
         }

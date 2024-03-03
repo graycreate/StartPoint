@@ -187,11 +187,12 @@ public extension View {
     return self.background(Color.almostClear)
   }
   
-  public func clip(radius: CGFloat = -1,
+  func clip(radius: CGFloat = -1,
                    corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight],
                    strokeSize: CGFloat = 1,
                    strokeColor: Color = Color.border
   ) -> some View {
+    // TODO: Improve performance
     self.modifier(RoundedEdgeModifier(radius: radius, corners: corners,
                                       width: strokeSize, color: strokeColor))
   }

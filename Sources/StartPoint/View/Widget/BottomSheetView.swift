@@ -36,7 +36,7 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
         }
         .padding(30)
         .padding(.top, 0)
-        .visualBlur(style: .systemThickMaterial, color: .white.dark(.black).opacity(0.5))
+        .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
         .clip(radius: 38)
         .padding(.horizontal, 12)
         .padding(.bottom, 26)
