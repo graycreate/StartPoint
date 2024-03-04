@@ -75,7 +75,7 @@ public struct ImageLabelView<RightView: View>: View {
     .frame(minHeight: 60)
     .padding(.horizontal, 12)
     .background(cardBGColor)
-    .clip(radius: 16, corners: self.corners)
+    .clip(radius: 22, corners: self.corners)
   }
   
   var corners: UIRectCorner {

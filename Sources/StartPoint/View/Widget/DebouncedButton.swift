@@ -8,14 +8,13 @@
 import SwiftUI
 
 public struct DebouncedButton<Label: View>: View {
-  // 按钮的动作，使用@escaping标记因为它会在初始化之后的某个时间点被调用
   let action: () -> Void
   
   // 标签的视图构建器
   let label: () -> Label
   
   // 防抖时间间隔, specified in seconds
-  private var debounceInterval: TimeInterval = 0.5
+  private var debounceInterval: TimeInterval = 0.3
   
   // 记录上一次按钮点击时间
   @State private var lastClickTime = Date(timeIntervalSince1970: 0)
