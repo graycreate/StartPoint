@@ -8,6 +8,7 @@
 import SwiftUI
 import UIKit
 import MessageUI
+import DeviceKit
 
 public struct MailView: UIViewControllerRepresentable {
   public var configure: ((MFMailComposeViewController) -> Void)?
@@ -85,16 +86,36 @@ public struct MailView: UIViewControllerRepresentable {
 
 
 public struct Mail {
-  public let to: String
-  public let subject: String
-  public let body: String
+  public private(set) var to: String = ""
+  public private(set) var subject: String = "Feedback"
+  public private(set) var body: String = Self.defaultBody
   
-  public init(to: String, subject: String, body: String) {
-    self.to = to
-    self.subject = subject
-    self.body = body
+  private static var defaultBody: String {
+    "AppVersion: " + Bundle.main.fullVersion + "\n"
+    + "Device: " + Device.current.description + "\n"
+    + "OSVersion: " + UIDevice.current.systemVersion + "\n"
   }
   
+
+  private init() {}
+  
+  @discardableResult
+  public static func to(_ to: String, subject: String = "Feedback") -> Self {
+    var mail = Mail()
+    mail.to = to
+    mail.subject = subject
+    return mail
+  }
+  
+  public func append(key: String, value: String)-> Self {
+    var mail = self
+    mail.body += key + ": " + value + "\n"
+    return mail
+  }
+  
+}
+
+extension Mail {
   public func canSendBy1stPartyClient() -> Bool {
     MFMailComposeViewController.canSendMail()
   }
@@ -117,9 +138,13 @@ public struct Mail {
   }
   
   public static func createEmailUrl(mail: Mail) -> URL? {
-    let subjectEncoded = mail.subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-    let bodyEncoded = mail.body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
     let to = mail.to
+    let subjectEncoded = mail.subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+    // Append a line before body with html
+    let prefix: String = "<br /> <br /> <br /> <br /> <br /> <br /> <hr>"
+    let subfix: String = "<hr>"
+    let body = prefix + mail.body + subfix
+    let bodyEncoded = body.replacingOccurrences(of: "\n", with: "<br />").addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
     
     let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
     let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
@@ -138,4 +163,6 @@ public struct Mail {
     
     return nil
   }
+
+  
 }
