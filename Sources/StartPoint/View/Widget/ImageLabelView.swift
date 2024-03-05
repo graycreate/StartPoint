@@ -8,26 +8,34 @@
 import SwiftUI
 
 
-public struct ImageLabelView<RightView: View>: View {
+@available(iOS 17.0, *)
+public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   var systemName: String = ""
   var text: String = ""
   var values: [String] = []
   var rightIcon: String
   var rightView: RightView?
+  var badgeView: BadgeView?
   var type: SectionItemType
+  var radius: CGFloat = 22
   
   public init(systemName: String = "",
        title: String = "",
        values: [String] = [],
        rightIcon: String = "chevron.forward",
        type: SectionItemType = .single,
-       @ViewBuilder rightView: () -> RightView? = { EmptyView() }) {
+       radius: CGFloat = 22,
+       @ViewBuilder rightView: () -> RightView? = { EmptyView() },
+       @ViewBuilder badgeView: () -> BadgeView? = { EmptyView() }
+  ) {
     self.systemName = systemName
     self.text = title
     self.values = values
     self.rightIcon = rightIcon
     self.type = type
+    self.radius = radius
     self.rightView = rightView()
+    self.badgeView = badgeView()
   }
   
   var multiValue: Bool {
@@ -48,7 +56,14 @@ public struct ImageLabelView<RightView: View>: View {
       VStack(alignment: .leading, spacing: 2.4) {
         Text(text)
           .font(.system(size: 19, weight: .medium, design: .rounded))
+          .lineLimit(1)
           .foregroundColor(Color.labelColorWeak)
+          .overlay(alignment: .trailing) {
+            self.badgeView
+              .visualEffect { content, geo in
+              content.offset(x: geo.size.width + 6)
+            }
+          }
         if multiValue {
           Text(values.joined(separator: ", "))
             .font(.system(size: 11, weight: .medium, design: .rounded))
@@ -75,7 +90,7 @@ public struct ImageLabelView<RightView: View>: View {
     .frame(minHeight: 60)
     .padding(.horizontal, 12)
     .background(cardBGColor)
-    .clip(radius: 22, corners: self.corners)
+    .clip(radius: self.type == .single ? 18 : self.radius, corners: self.corners)
   }
   
   var corners: UIRectCorner {
@@ -94,6 +109,7 @@ public struct ImageLabelView<RightView: View>: View {
   }
   
 }
+
 
 //struct SwiftUIView_Previews: PreviewProvider {
 //    static var previews: some View {
