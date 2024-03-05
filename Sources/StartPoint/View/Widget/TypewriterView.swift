@@ -90,7 +90,7 @@ public struct TypewriterView: View {
         let range = animatedText.startIndex...index
         copyAttributes(range: range)
         if self.hapic {
-          hapticFeedback(.light)
+          haptic(.light)
         }
         // Wait
         let typingDelay: Duration = .milliseconds(80 / self.speed)

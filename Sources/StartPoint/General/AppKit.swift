@@ -43,6 +43,21 @@ public extension AppKit {
     "https://apps.apple.com/app/id\(appID)"
   }
   
+  
+  static var name: String {
+    if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String {
+      log("App Name: \(appName)")
+      return appName
+    }
+    
+    if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String {
+      log("App Name: \(appName)")
+      return appName
+    }
+    
+    return ""
+  }
+  
 }
 
 public extension String {
@@ -50,3 +65,6 @@ public extension String {
     URL(string: self)
   }
 }
+
+
+

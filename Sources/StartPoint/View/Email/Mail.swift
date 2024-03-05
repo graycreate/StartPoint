@@ -12,7 +12,7 @@ import MessageUI
 
 public struct Mail {
   public private(set) var to: String = ""
-  public private(set) var subject: String = "Feedback"
+  public private(set) var subject: String = AppKit.name + " Feedback"
   public private(set) var body: String = Self.defaultBody
   
   private static var defaultBody: String {
@@ -25,7 +25,7 @@ public struct Mail {
   private init() {}
   
   @discardableResult
-  public static func to(_ to: String, subject: String = "Feedback") -> Self {
+  public static func to(_ to: String, subject: String = AppKit.name + " Feedback") -> Self {
     var mail = Mail()
     mail.to = to
     mail.subject = subject

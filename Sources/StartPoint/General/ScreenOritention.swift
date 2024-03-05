@@ -50,7 +50,7 @@ public enum OritentionMode: Int {
     UIDevice.current.setValue(supportMode.toUIInterfaceOrientation.rawValue, forKey: "orientation")
     UIViewController.attemptRotationToDeviceOrientation()
 //    log(tag: "onRotate", "update current support Mode to: \(supportMode), oritentionMode: \(oritentionMode)")
-    runInMain(delay: 50) {
+    dispatch(delay: 50) {
       if oritentionMode == .auto {
         let isPortrait = !UIDevice.current.orientation.isLandscape
         GeneralState.shared.isPortrait = isPortrait

@@ -29,7 +29,7 @@ public struct RootView<Content: View> : View {
                 GeneralState.shared.safeArea = geo.safeAreaInsets
               }
               .onRotate { isPortrait in
-                runInMain {
+                dispatch {
                   withAnimation {
                     GeneralState.shared.isPortrait = isPortrait
                   }
