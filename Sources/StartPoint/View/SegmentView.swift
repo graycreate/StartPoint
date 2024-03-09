@@ -46,7 +46,7 @@ public struct SegmentedView: View  {
         Color.hex(0x767680, alpha: 0.08)
           .night(.hex(0x767680, alpha: 0.24))
       }
-      .clipCorner(corner)
+      .clip(radius: self.corner)
     }
     .frame(height: self.childHeight + extraPadding * 2)
   }
@@ -67,7 +67,7 @@ fileprivate struct ItemView: View {
       .font(.system(size: self.textSize, weight: .medium, design: .rounded))
       .opacity(self.isSelected ? 1.0 : 0.8)
       .padding(.horizontal, 16)
-      .padding(.vertical, 8)
+      .padding(.vertical, 14)
       .frame(width: self.width)
       .background {
         if isSelected {

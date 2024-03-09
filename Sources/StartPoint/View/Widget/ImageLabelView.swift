@@ -54,16 +54,13 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
           .foregroundColor(Color.labelColorWeak)
       }
       VStack(alignment: .leading, spacing: 2.4) {
-        Text(text)
-          .font(.system(size: 19, weight: .medium, design: .rounded))
-          .lineLimit(1)
-          .foregroundColor(Color.labelColorWeak)
-          .overlay(alignment: .trailing) {
-            self.badgeView
-              .visualEffect { content, geo in
-              content.offset(x: geo.size.width + 6)
-            }
-          }
+        HStack {
+          Text(text)
+            .font(.system(size: 19, weight: .medium, design: .rounded))
+            .lineLimit(1)
+            .foregroundColor(Color.labelColorWeak)
+          self.badgeView
+        }
         if multiValue {
           Text(values.joined(separator: ", "))
             .font(.system(size: 11, weight: .medium, design: .rounded))
@@ -80,6 +77,7 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
           .foregroundColor(valueColor)
       }
       rightView
+        .fixedSize(horizontal: true, vertical: false)
       if rightIcon.notEmpty() {
         Image(systemName: rightIcon)
           .font(.system(size: 15, weight: .semibold, design: .rounded))
