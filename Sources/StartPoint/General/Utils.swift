@@ -141,11 +141,3 @@ public extension Bundle {
   
 }
 
-
-
-public extension String {
-  var prefKey: String {
-    Bundle.bundleID() + "." + self
-  }
-}
-
