@@ -12,19 +12,20 @@ import UIKit
 import SwiftUI
 
 private let loggable: Bool = true
-public let TAG = "DEBUG_TAG: "
+public let TAG = "TAG: "
 
 public func log(tag: String = .empty, _ items: Any..., separator: String = " ", terminator: String = "\n", file: String = #file) {
   if !loggable {
     return
   }
 #if DEBUG
-  let filename = (file as NSString).lastPathComponent
+  let pathComponents = (file as NSString).pathComponents
+  let filename = pathComponents.suffix(2).joined(separator: "/")
   var finalTag = tag
   if finalTag.isEmpty {
     finalTag = filename
   }
-  print(TAG + finalTag, items, separator, terminator)
+  print(finalTag + ": ", items, separator, terminator)
 #endif
 }
 

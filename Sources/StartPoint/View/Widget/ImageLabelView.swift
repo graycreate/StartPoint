@@ -62,7 +62,8 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
           self.badgeView
         }
         if multiValue {
-          Text(values.joined(separator: ", "))
+          let valueText: String = values.filter({ $0.notEmpty() }).joined(separator: ", ")
+          Text(valueText)
             .font(.system(size: 11, weight: .medium, design: .rounded))
             .multilineTextAlignment(.leading)
             .foregroundColor(valueColor)

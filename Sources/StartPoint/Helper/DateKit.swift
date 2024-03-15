@@ -97,5 +97,14 @@ public extension TimeInterval {
   var timeStampMilliSecond: Int64 {
     return Int64(self * 1000)
   }
+  
+  var localFormatted: String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium // 选择日期风格
+    formatter.timeStyle = .medium // 选择时间风格
+    formatter.locale = .current
+    return formatter.string(from: Date(timeIntervalSince1970: self))
+  }
+  
 }
 
