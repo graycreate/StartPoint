@@ -58,6 +58,31 @@ public extension AppKit {
     return ""
   }
   
+  static func getAppIcons(defaultIconName: String = "AppIcon") -> [String] {
+      var iconNames: [String] = [defaultIconName]
+      
+      // 访问 Info.plist 中关于替代图标的配置
+      if let iconsDictionary = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: AnyObject],
+         let alternateIconsDictionary = iconsDictionary["CFBundleAlternateIcons"] as? [String: AnyObject] {
+          
+          for (iconName, _) in alternateIconsDictionary {
+              // 将图标名称添加到数组中
+              iconNames.append(iconName)
+          }
+      }
+      
+      return iconNames
+  }
+  
+  static func setAppIcon(_ iconName: String) {
+      // 如果是默认图标，传入 nil
+      if iconName == "AppIcon" {
+          UIApplication.shared.setAlternateIconName(nil)
+      } else {
+          UIApplication.shared.setAlternateIconName(iconName)
+      }
+  }
+  
 }
 
 public extension String {
