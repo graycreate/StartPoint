@@ -64,7 +64,9 @@ public extension Color {
   
   static let floatButtonBg = Color(.hex(0xffffff, alpha: 0.45) , dark: .hex(0x000000, alpha: 0.25))
 //  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
-  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
+//  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
+  static let border = Color.secondary.opacity(0.12).adaptive()
+  static let borderAccent = Color.secondary.opacity(0.5).night(alpha: 0.3)
   static let lightGray = hex(0xF5F5F5)
   static let almostClear = hex(0xFFFFFF, alpha: 0.000001)
   static let debugColor = hex(0xFF0000, alpha: 0.1)

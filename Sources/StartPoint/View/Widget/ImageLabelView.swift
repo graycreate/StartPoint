@@ -19,6 +19,8 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   var type: SectionItemType
   var radius: CGFloat = 22
   
+  private let strokeSize = 1.0
+  
   public init(systemName: String = "",
        title: String = "",
        values: [String] = [],
@@ -88,8 +90,15 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
     .animation(.easeInOut, value: multiValue)
     .frame(minHeight: 60)
     .padding(.horizontal, 12)
-    .background(cardBGColor)
-    .clip(radius: self.type == .single ? 18 : self.radius, corners: self.corners)
+    .background(self.cardBGColor)
+    .clip(radius: self.type == .single ? 18 : self.radius, corners: self.corners, strokeSize: self.strokeSize)
+    .overlay(alignment: .top) {
+      if self.type == .middle || self.type == .bottom {
+        self.cardBGColor
+          .frame(height: self.strokeSize)
+          .padding(.horizontal, self.strokeSize)
+      }
+    }
   }
   
   var corners: UIRectCorner {
@@ -101,7 +110,7 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
     }
   }
   
-  fileprivate let cardBGColor = Color.white.adaptive(night: .gray.opacity(0.1))
+  fileprivate let cardBGColor = Color.white.night(.hex(0x2a2a2b))
   
   public enum SectionItemType {
     case top, middle, bottom, single
@@ -110,8 +119,8 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
 }
 
 
-//struct SwiftUIView_Previews: PreviewProvider {
-//    static var previews: some View {
-//      ImageLabelView()
-//    }
+//#Preview {
+//  if #available(iOS 17.0, *) {
+//    ImageLabelView()
+//  }
 //}
