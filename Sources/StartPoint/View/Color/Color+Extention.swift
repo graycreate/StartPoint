@@ -2,7 +2,7 @@
 //  Colors.swift
 //  DaysTill
 //
-//  Created by GARY on 2022/12/12.
+//  Created by Gray on 2022/12/12.
 //
 
 import Foundation

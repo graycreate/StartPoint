@@ -2,7 +2,7 @@
 //  Colors.swift
 //  
 //
-//  Created by GARY on 2023/1/7.
+//  Created by Gray on 2023/1/7.
 //
 
 import SwiftUI

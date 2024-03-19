@@ -2,7 +2,7 @@
 //  ImageLabelView.swift
 //  
 //
-//  Created by GARY on 2023/3/11.
+//  Created by Gray on 2023/3/11.
 //
 
 import SwiftUI

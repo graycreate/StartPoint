@@ -2,7 +2,7 @@
 //  SheetPageIndicator.swift
 //  DaysTill
 //
-//  Created by GARY on 2022/12/22.
+//  Created by Gray on 2022/12/22.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  SegmentView.swift
 //
 //
-//  Created by GARY on 2023/7/26.
+//  Created by Gray on 2023/7/26.
 //
 
 import SwiftUI

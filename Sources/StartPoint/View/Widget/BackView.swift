@@ -2,7 +2,7 @@
 //  BackView.swift
 //  DaysTill
 //
-//  Created by GARY on 2022/12/17.
+//  Created by Gray on 2022/12/17.
 //
 
 import SwiftUI

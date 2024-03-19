@@ -2,7 +2,7 @@
 //  Number+Extention.swift
 //  
 //
-//  Created by GARY on 2023/2/5.
+//  Created by Gray on 2023/2/5.
 //
 
 import Foundation
