@@ -70,8 +70,8 @@ public extension AppKit {
               iconNames.append(iconName)
           }
       }
-      
-      return iconNames
+    
+    return iconNames.sorted()
   }
   
   static func setAppIcon(_ iconName: String) {
@@ -80,6 +80,14 @@ public extension AppKit {
           UIApplication.shared.setAlternateIconName(nil)
       } else {
           UIApplication.shared.setAlternateIconName(iconName)
+      }
+  }
+  
+  static func getCurrentAppIconName() -> String {
+      if let currentIconName = UIApplication.shared.alternateIconName {
+          return currentIconName
+      } else {
+          return "AppIcon"
       }
   }
   
