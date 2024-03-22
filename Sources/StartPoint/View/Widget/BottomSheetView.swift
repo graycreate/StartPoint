@@ -13,7 +13,22 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
   var content: Content
   let anchorView: AnchorView
   
+  @State private var size: CGSize = .zero
   
+  var radius: CGFloat {
+    // 446 -> 36
+    // 290 -> 28
+    // 28 <= radius <= 36
+    let height = self.size.height
+    if height <= 290 {
+      return 30
+    } else if height < 446 {
+      return 30 + (height - 290) / (446 - 290) * (36 - 30)
+    } else {
+      return 36
+    }
+  }
+
   public init(isShowing: Binding<Bool>, @ViewBuilder titleView: ()-> TitleView, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
     self._isShowing = isShowing
     self.titleView = titleView()
@@ -38,9 +53,13 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
         .padding(.top, 0)
         .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
 //        .background(.thickMaterial)
-        .clip(radius: 36, strokeColor: Color.borderAccent)
+        .clip(radius: self.radius, strokeColor: Color.borderAccent)
         .padding(.horizontal, 12)
         .padding(.bottom, 26)
+        .readSize { size in
+          self.size = size
+          log("size: \(size)")
+        }
         .transition(.move(edge: .bottom))
         .zIndex(2)
       }
