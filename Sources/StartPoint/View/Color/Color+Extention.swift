@@ -44,7 +44,6 @@ public extension Color {
     self.scale(b: 1.1)
   }
   
-  // TODO: Change to reduce the b value of hsb color space.
   func adaptive(night: Color? = nil, alpha: CGFloat = 0.85)-> Color {
     Color(self , dark: night ?? self.opacity(alpha))
   }
@@ -58,7 +57,7 @@ public extension Color {
   }
   
   
-  public func shape() -> some View {
+  func shape() -> some View {
     self.frame(width: .infinity)
   }
   
@@ -66,7 +65,7 @@ public extension Color {
 //  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
 //  static let border = hex(0xE8E8E8, alpha: 0.8).adaptive(night: .hex(0x212121))
   static let border = Color.secondary.opacity(0.12).adaptive()
-  static let borderAccent = Color.secondary.opacity(0.5).night(alpha: 0.3)
+  static let borderAccent = Color.secondary.opacity(0.4).night(alpha: 0.3)
   static let lightGray = hex(0xF5F5F5)
   static let almostClear = hex(0xFFFFFF, alpha: 0.000001)
   static let debugColor = hex(0xFF0000, alpha: 0.1)

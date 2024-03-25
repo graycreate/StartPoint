@@ -21,3 +21,17 @@ public extension Array where Element: Equatable {
   }
 }
 
+
+public extension Optional where Wrapped: Collection {
+    var isEmpty: Bool {
+        switch self {
+        case .some(let array):
+            return array.isEmpty
+        case .none:
+            return true
+        }
+    }
+}
+
+
+

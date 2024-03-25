@@ -192,7 +192,6 @@ public extension View {
                    strokeSize: CGFloat = 1,
                    strokeColor: Color = Color.border
   ) -> some View {
-    // TODO: Improve performance
     self.modifier(RoundedEdgeModifier(radius: radius, corners: corners,
                                       width: strokeSize, color: strokeColor))
   }
@@ -503,7 +502,6 @@ public extension Text {
 }
 
 
-// TODO: Move this to StartPoint
 public extension View {
   public func stroke(color: Color = .white, width: CGFloat = 1) -> some View {
         modifier(StrokeModifer(strokeSize: width, strokeColor: color))
