@@ -49,7 +49,13 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
         .zIndex(1)
         VStack(spacing: 14) {
           self.titleBarView
-          self.content
+          if #available(iOS 17.0, *) {
+            self.content
+              .geometryGroup()
+          } else {
+            // Fallback on earlier versions
+            self.content
+          }
 //            .padding(.horizontal, 2)
         }
         .padding(30)
@@ -113,7 +119,9 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
   }
   
   private var animation: Animation {
-    .easeInOut
+    .bouncy
+//    .default
+//    .easeInOut
 //    .speed(1.3)
 //    .spring(
 //      response: 0.45,
