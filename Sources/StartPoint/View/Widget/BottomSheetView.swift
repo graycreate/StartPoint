@@ -51,14 +51,14 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
           self.titleBarView
           if #available(iOS 17.0, *) {
             self.content
-              .geometryGroup()
           } else {
             // Fallback on earlier versions
             self.content
           }
 //            .padding(.horizontal, 2)
         }
-        .padding(30)
+        .padding(.vertical, 30)
+        .padding(.horizontal, 28)
         .padding(.top, 0)
         .background {
           Color.clear
