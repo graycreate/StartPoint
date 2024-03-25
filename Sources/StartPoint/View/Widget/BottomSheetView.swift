@@ -1,6 +1,6 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Gray on 2023/3/20.
 //
@@ -31,7 +31,7 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
       return 36
     }
   }
-
+  
   public init(isShowing: Binding<Bool>, @ViewBuilder titleView: ()-> TitleView, @ViewBuilder content: ()-> Content, anchorView: AnchorView) {
     self._isShowing = isShowing
     self.titleView = titleView()
@@ -44,9 +44,9 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
       self.anchorView
         .zIndex(0)
       if (isShowing) {
-      self.dimView
-        .transition(.opacity.animation(.easeInOut(duration: 0.3)))
-        .zIndex(1)
+        self.dimView
+          .transition(.opacity.animation(.easeInOut(duration: 0.3)))
+          .zIndex(1)
         VStack(spacing: 14) {
           self.titleBarView
           if #available(iOS 17.0, *) {
@@ -55,30 +55,30 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
             // Fallback on earlier versions
             self.content
           }
-//            .padding(.horizontal, 2)
+          //            .padding(.horizontal, 2)
         }
         .padding(.vertical, 30)
         .padding(.horizontal, 28)
         .padding(.top, 0)
         .background {
           Color.clear
-          .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
-          .clip(radius: self.radius, strokeColor: Color.borderAccent)
-          .scaleEffect(self.scaleY)
+            .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
+            .clip(radius: self.radius, strokeColor: Color.borderAccent)
+            .scaleEffect(self.scaleY)
         }
         .offset(y: self.dragOffset)
         .gesture(DragGesture()
           .onChanged { gesture in
             let scrollTop = gesture.translation.height < 0
-              withAnimation {
-                self.scaleY = scrollTop ? 1.01 : 0.99
-                let offset = gesture.translation.height
-                if offset > 0 {
-                  self.dragOffset = min(offset, 16)
-                } else {
-                  self.dragOffset = max(offset, -16)
-                }
+            withAnimation {
+              self.scaleY = scrollTop ? 1.01 : 0.99
+              let offset = gesture.translation.height
+              if offset > 0 {
+                self.dragOffset = min(offset, 16)
+              } else {
+                self.dragOffset = max(offset, -16)
               }
+            }
           }
           .onEnded { value in
             withAnimation(.bouncy) {
@@ -120,15 +120,15 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
   
   private var animation: Animation {
     .bouncy
-//    .default
-//    .easeInOut
-//    .speed(1.3)
-//    .spring(
-//      response: 0.45,
-//      dampingFraction: 0.85,
-//      blendDuration: 1
-//    )
-//    .speed(1.3)
+    //    .default
+    //    .easeInOut
+    //    .speed(1.3)
+    //    .spring(
+    //      response: 0.45,
+    //      dampingFraction: 0.85,
+    //      blendDuration: 1
+    //    )
+    //    .speed(1.3)
   }
   
   private var dimAnimation: Animation {
@@ -160,7 +160,7 @@ public extension View {
   }
   
   func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: String, @ViewBuilder content: @escaping () -> Content) -> some View {
-      BottomSheetView(isShowing: isShowing, titleView: { SheetTitle(title) }, content: content, anchorView: self)
+    BottomSheetView(isShowing: isShowing, titleView: { SheetTitle(title) }, content: content, anchorView: self)
   }
   
 }
