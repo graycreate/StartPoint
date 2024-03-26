@@ -61,31 +61,9 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
         .padding(.horizontal, 28)
         .padding(.top, 0)
         .background {
-          Color.clear
-            .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
-            .clip(radius: self.radius, strokeColor: Color.borderAccent)
-            .scaleEffect(self.scaleY)
+          self.bgView
         }
         .offset(y: self.dragOffset)
-        .gesture(DragGesture()
-          .onChanged { gesture in
-            let scrollTop = gesture.translation.height < 0
-            withAnimation {
-              self.scaleY = scrollTop ? 1.01 : 0.99
-              let offset = gesture.translation.height
-              if offset > 0 {
-                self.dragOffset = min(offset, 16)
-              } else {
-                self.dragOffset = max(offset, -16)
-              }
-            }
-          }
-          .onEnded { value in
-            withAnimation(.bouncy) {
-              self.scaleY = 1.0
-              self.dragOffset = 0
-            }
-          })
         .padding(.horizontal, 12)
         .padding(.bottom, 26)
         .readSize { size in
@@ -116,6 +94,33 @@ public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>:
       }
       .padding(.trailing, -5)
     }
+  }
+  
+  @ViewBuilder
+  private var bgView: some View {
+    Color.clear
+      .visualBlur(style: .systemThickMaterial, color: .white.night(.black).opacity(0.5))
+      .clip(radius: self.radius, strokeColor: Color.borderAccent)
+      .scaleEffect(self.scaleY)
+      .gesture(DragGesture()
+        .onChanged { gesture in
+          let scrollTop = gesture.translation.height < 0
+          withAnimation {
+            self.scaleY = scrollTop ? 1.01 : 0.99
+            let offset = gesture.translation.height
+            if offset > 0 {
+              self.dragOffset = min(offset, 16)
+            } else {
+              self.dragOffset = max(offset, -16)
+            }
+          }
+        }
+        .onEnded { value in
+          withAnimation(.bouncy) {
+            self.scaleY = 1.0
+            self.dragOffset = 0
+          }
+        })
   }
   
   private var animation: Animation {
