@@ -387,37 +387,6 @@ extension Text {
   }
 }
 
-
-// Our custom view modifier to track rotation and
-// call our action
-struct DeviceRotationViewModifier: ViewModifier {
-  let action: (Bool) -> Void
-  
-  func body(content: Content) -> some View {
-    content
-      .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-        guard let scene = UIApplication.shared.currentScene else {
-//          log(tag: "onRotate", "guard let scene = UIApplication.shared.currentScene")
-          return
-        }
-        var isPortrait = scene.interfaceOrientation.isPortrait
-        let intMode: Int = Persist.standard.read(key: Prefs.SCREEN_ORITATION_MODE)
-        let screenMode: OritentionMode = OritentionMode.build(from: intMode)
-        if screenMode != .auto {
-          isPortrait = screenMode == .portrait
-        }
-        action(isPortrait)
-      }
-  }
-}
-
-// A View wrapper to make the modifier easier to use
-public extension View {
-  func onRotate(perform action: @escaping (Bool) -> Void) -> some View {
-    self.modifier(DeviceRotationViewModifier(action: action))
-  }
-}
-
 extension UIApplication {
   var currentScene: UIWindowScene? {
     connectedScenes

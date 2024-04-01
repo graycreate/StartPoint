@@ -13,9 +13,7 @@ open class GeneralState: ObservableObject {
   public static var sample: GeneralState {
     shared
   }
-//  @Published public var deviceState: DeviceState = DeviceState()
   @Published public var autoHideIndicator: Bool = false
-  @Published public var isPortrait: Bool = OritentionMode.isPortraitFromInit
   @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
   
   /// Root UI elements

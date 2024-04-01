@@ -46,12 +46,10 @@ public extension AppKit {
   
   static var name: String {
     if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String {
-      log("App Name: \(appName)")
       return appName
     }
     
     if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String {
-      log("App Name: \(appName)")
       return appName
     }
     

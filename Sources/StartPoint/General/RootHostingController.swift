@@ -15,10 +15,6 @@ class RootHostingController<Content: View>: UIHostingController<Content> {
     return autoHide
   }
   
-  override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-    return OritentionMode.current.toSystemMode
-  }
-  
   override var shouldAutorotate: Bool {
     true
   }

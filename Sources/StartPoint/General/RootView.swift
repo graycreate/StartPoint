@@ -25,17 +25,7 @@ public struct RootView<Content: View> : View {
           GeometryReader { geo in
             Color.clear
               .onAppear {
-                GeneralState.shared.isPortrait = OritentionMode.isPortraitFromInit
                 GeneralState.shared.safeArea = geo.safeAreaInsets
-              }
-              .onRotate { isPortrait in
-                dispatch {
-                  withAnimation {
-                    GeneralState.shared.isPortrait = isPortrait
-                  }
-                  GeneralState.shared.safeArea = geo.safeAreaInsets
-                  log("------ SafeArea: \(GeneralState.shared.safeArea) , isPortrait: \(isPortrait)")
-                }
               }
           }
         }
