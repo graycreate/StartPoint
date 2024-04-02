@@ -1,10 +1,14 @@
 import SwiftUI
 
-struct WebViewPage: View {
-    let url: String
+public struct WebViewPage: View {
+   public let url: String
     @StateObject private var webViewStore = WebViewStore()
-
-    var body: some View {
+    
+    public init(url: String) {
+        self.url = url
+    }
+    
+    public var body: some View {
         WebView(webView: webViewStore.webView)
             .navigationBarTitle(Text(verbatim: webViewStore.title ?? ""), displayMode: .inline)
             .navigationBarItems(trailing: HStack {
@@ -37,8 +41,21 @@ struct WebViewPage: View {
 
 }
 
+public extension View {
+    @available(iOS 16.4, *)
+    func browse(url: String, show: Binding<Bool>) -> some View {
+        self
+            .sheet(isPresented: show) {
+                WebViewPage(url: url)
+                    .presentationCornerRadius(32)
+                    .presentationDragIndicator(.visible)
+            }
+    }
+}
+
 struct WebViewPage_Previews: PreviewProvider {
     static var previews: some View {
         WebViewPage(url: "https://github.com")
+            .ignoresSafeArea()
     }
 }
