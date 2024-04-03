@@ -59,14 +59,10 @@ public extension View {
 
 struct WebViewPage_Previews: PreviewProvider {
     static var previews: some View {
-        if #available(iOS 16.4, *) {
-            ZStack {
-                Color.yellow.greedyFrame()
-            }
-            .ignoresSafeArea()
-            .browse(url: "https://github.com", show: .constant(true))
-        } else {
-            // Fallback on earlier versions
+        ZStack {
+            Color.yellow.greedyFrame()
         }
+        .ignoresSafeArea()
+        .browse(url: "https://github.com", show: .constant(true))
     }
 }
