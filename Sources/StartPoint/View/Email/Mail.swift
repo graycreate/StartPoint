@@ -76,18 +76,18 @@ extension Mail {
     let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
     let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
     let airmailUrl = URL(string: "airmail://compose?to=\(to)&subject=\(subjectEncoded)&htmlBody=\(bodyEncoded)")
-
-      if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
-          return sparkUrl
-      } else if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
-          return gmailUrl
-      } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
-          return outlookUrl
-      } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
-          return yahooMail
-      } else if let airmailUrl = airmailUrl, UIApplication.shared.canOpenURL(airmailUrl) {
-          return airmailUrl
-      }
+    
+    if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
+      return sparkUrl
+    } else if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
+      return gmailUrl
+    } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
+      return outlookUrl
+    } else if let yahooMail = yahooMail, UIApplication.shared.canOpenURL(yahooMail) {
+      return yahooMail
+    } else if let airmailUrl = airmailUrl, UIApplication.shared.canOpenURL(airmailUrl) {
+      return airmailUrl
+    }
     
     return nil
   }
