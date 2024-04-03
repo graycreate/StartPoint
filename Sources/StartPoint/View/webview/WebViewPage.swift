@@ -1,12 +1,15 @@
 import SwiftUI
 
 public struct WebViewPage: View {
-   public let url: String
-    @StateObject private var webViewStore = WebViewStore()
+  public let url: String
+  @StateObject private var webViewStore: WebViewStore
     
-    public init(url: String) {
-        self.url = url
-    }
+  public init(url: String, mailtoClicked: ((String) -> Void)? = nil) {
+    self.url = url
+    let webView = FullScreenWKWebView()
+    self._webViewStore = StateObject(wrappedValue: WebViewStore(webView: webView))
+    webView.mailToClicked = mailtoClicked
+  }
     
     public var body: some View {
         WebView(webView: webViewStore.webView)
@@ -49,18 +52,17 @@ public struct WebViewPage: View {
 
 public extension View {
     
-    @available(iOS 16.4, *)
-    func browse(url: String, show: Binding<Bool>) -> some View {
-        self
-            .sheet(isPresented: show) {
-                WebViewPage(url: url)
-                    .greedyFrame()
-                    .ignoresSafeArea()
-                    .background(Color.hex(0xF6F6F5).night(.hex(0x222222)))
-                    .presentationCornerRadius(32)
-                    .presentationDragIndicator(.visible)
-            }
-    }
+  func browse(url: String, show: Binding<Bool>, mailtoClicked: ((String) -> Void)? = nil) -> some View {
+    self
+      .sheet(isPresented: show) {
+        WebViewPage(url: url, mailtoClicked: mailtoClicked)
+          .greedyFrame()
+          .ignoresSafeArea()
+          .background(Color.hex(0xF6F6F5).night(.hex(0x222222)))
+          .presentationCornerRadius(32)
+          .presentationDragIndicator(.visible)
+      }
+  }
 }
 
 struct WebViewPage_Previews: PreviewProvider {

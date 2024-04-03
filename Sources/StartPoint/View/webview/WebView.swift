@@ -4,20 +4,21 @@ import WebKit
 
 @dynamicMemberLookup
 public class WebViewStore: ObservableObject {
-  @Published public var webView: WKWebView {
+  @Published public var webView: FullScreenWKWebView {
     didSet {
       setupObservers()
     }
   }
   
-  public init(webView: WKWebView = FullScreenWKWebView()) {
+  public init(webView: FullScreenWKWebView = FullScreenWKWebView()) {
     self.webView = webView
-      self.webView.isOpaque = false
+    self.webView.isOpaque = false
+    self.webView.navigationDelegate = webView
     setupObservers()
   }
   
   private func setupObservers() {
-    func subscriber<Value>(for keyPath: KeyPath<WKWebView, Value>) -> NSKeyValueObservation {
+    func subscriber<Value>(for keyPath: KeyPath<FullScreenWKWebView, Value>) -> NSKeyValueObservation {
       return webView.observe(keyPath, options: [.prior]) { _, change in
         if change.isPrior {
           self.objectWillChange.send()
@@ -62,7 +63,6 @@ public class WebViewStore: ObservableObject {
 }
 
 
-
 #if os(iOS)
 /// A container for using a WKWebView in SwiftUI
 public struct WebView: View, UIViewRepresentable {
@@ -101,9 +101,36 @@ public struct WebView: View, NSViewRepresentable {
 }
 #endif
 
-public class FullScreenWKWebView: WKWebView {
-    
-    public override var safeAreaInsets: UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+public class FullScreenWKWebView: WKWebView, WKNavigationDelegate {
+  public var mailToClicked: ((String) -> Void)?
+  
+  public override var safeAreaInsets: UIEdgeInsets {
+    return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+  }
+  
+  public func webView(_ webView: WKWebView,
+                      decidePolicyFor navigationAction: WKNavigationAction,
+                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    guard let url = navigationAction.request.url else {
+      decisionHandler(.allow)
+      return
     }
+    
+    if url.scheme == "mailto" {
+      if let mailToClicked = self.mailToClicked {
+        mailToClicked(url.absoluteString)
+        decisionHandler(.cancel)
+        return
+      }
+      if UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        decisionHandler(.cancel)
+      } else {
+        decisionHandler(.allow)
+      }
+    } else {
+      decisionHandler(.allow)
+    }
+  }
+  
 }
