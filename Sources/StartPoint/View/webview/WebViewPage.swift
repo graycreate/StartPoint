@@ -47,6 +47,9 @@ public extension View {
         self
             .sheet(isPresented: show) {
                 WebViewPage(url: url)
+                    .greedyFrame()
+                    .ignoresSafeArea()
+                    .background(Color.white.night(.black))
                     .presentationCornerRadius(32)
                     .presentationDragIndicator(.visible)
             }
@@ -55,7 +58,14 @@ public extension View {
 
 struct WebViewPage_Previews: PreviewProvider {
     static var previews: some View {
-        WebViewPage(url: "https://github.com")
+        if #available(iOS 16.4, *) {
+            ZStack {
+                Color.yellow.greedyFrame()
+            }
             .ignoresSafeArea()
+            .browse(url: "https://github.com", show: .constant(true))
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }

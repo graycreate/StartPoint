@@ -60,6 +60,8 @@ public class WebViewStore: ObservableObject {
   }
 }
 
+
+
 #if os(iOS)
 /// A container for using a WKWebView in SwiftUI
 public struct WebView: View, UIViewRepresentable {
@@ -97,3 +99,9 @@ public struct WebView: View, NSViewRepresentable {
   }
 }
 #endif
+
+public class FullScreenWKWebView: WKWebView {
+    public override var safeAreaInsets: UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+}
