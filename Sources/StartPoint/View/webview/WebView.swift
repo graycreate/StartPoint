@@ -10,7 +10,7 @@ public class WebViewStore: ObservableObject {
     }
   }
   
-  public init(webView: WKWebView = WKWebView()) {
+  public init(webView: WKWebView = FullScreenWKWebView()) {
     self.webView = webView
     setupObservers()
   }
