@@ -10,6 +10,12 @@ public struct WebViewPage: View {
     
     public var body: some View {
         WebView(webView: webViewStore.webView)
+        .overlay {
+          if self.webViewStore.isLoading {
+            ProgressView()
+              .scaleEffect(1.2)
+          }
+        }
             .navigationBarTitle(Text(verbatim: webViewStore.title ?? ""), displayMode: .inline)
             .navigationBarItems(trailing: HStack {
                 Button {
