@@ -12,6 +12,7 @@ public class WebViewStore: ObservableObject {
   
   public init(webView: WKWebView = FullScreenWKWebView()) {
     self.webView = webView
+      self.webView.isOpaque = false
     setupObservers()
   }
   
@@ -101,6 +102,7 @@ public struct WebView: View, NSViewRepresentable {
 #endif
 
 public class FullScreenWKWebView: WKWebView {
+    
     public override var safeAreaInsets: UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }

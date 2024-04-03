@@ -42,6 +42,7 @@ public struct WebViewPage: View {
 }
 
 public extension View {
+    
     @available(iOS 16.4, *)
     func browse(url: String, show: Binding<Bool>) -> some View {
         self
@@ -49,7 +50,7 @@ public extension View {
                 WebViewPage(url: url)
                     .greedyFrame()
                     .ignoresSafeArea()
-                    .background(Color.white.night(.black))
+                    .background(Color.hex(0xF6F6F5).night(.hex(0x222222)))
                     .presentationCornerRadius(32)
                     .presentationDragIndicator(.visible)
             }
