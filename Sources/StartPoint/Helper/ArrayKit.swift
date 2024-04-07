@@ -31,6 +31,11 @@ public extension Optional where Wrapped: Collection {
             return true
         }
     }
+  
+  var notEmpty: Bool {
+    return !isEmpty
+  }
+  
 }
 
 

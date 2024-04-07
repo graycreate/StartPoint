@@ -164,16 +164,16 @@ public extension View {
     BottomSheetView(isShowing: isShowing, titleView: titleView, content: content, anchorView: self)
   }
   
-  func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: String, @ViewBuilder content: @escaping () -> Content) -> some View {
+  func bottomSheet<Content: View>(isShowing: Binding<Bool>, title: LocalizedStringKey, @ViewBuilder content: @escaping () -> Content) -> some View {
     BottomSheetView(isShowing: isShowing, titleView: { SheetTitle(title) }, content: content, anchorView: self)
   }
   
 }
 
 private struct SheetTitle: View {
-  let title: String
+  let title: LocalizedStringKey
   
-  public init(_ title: String) {
+  public init(_ title: LocalizedStringKey) {
     self.title = title
   }
   
