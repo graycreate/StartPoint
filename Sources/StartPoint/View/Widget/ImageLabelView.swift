@@ -12,7 +12,7 @@ import SwiftUI
 public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   var systemName: String = ""
   var text: LocalizedStringKey = ""
-  var values: [LocalizedStringKey] = []
+  var values: [String] = []
   var rightIcon: String
   var rightView: RightView?
   var badgeView: BadgeView?
@@ -23,7 +23,7 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   
   public init(systemName: String = "",
        title: LocalizedStringKey = "",
-       values: [LocalizedStringKey] = [],
+       values: [String] = [],
        rightIcon: String = "chevron.forward",
        type: SectionItemType = .single,
        radius: CGFloat = 22,
@@ -64,7 +64,7 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
           self.badgeView
         }
         if multiValue {
-          let valueText: String = values.filter({ $0.notEmpty }).map{ $0.stringValue() }.joined(separator: ", ")
+          let valueText: String = values.filter{ $0.notEmpty() }.joined(separator: ", ")
           Text(valueText)
             .font(.system(size: 11, weight: .medium, design: .rounded))
             .multilineTextAlignment(.leading)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public extension Calendar {
   func daysBetween(_ from: Date, and to: Date, includeStartDay: Bool = false) -> Int {
@@ -100,8 +101,8 @@ public extension TimeInterval {
   
   var localFormatted: String {
     let formatter = DateFormatter()
-    formatter.dateStyle = .medium // 选择日期风格
-    formatter.timeStyle = .medium // 选择时间风格
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .medium 
     formatter.locale = .current
     return formatter.string(from: Date(timeIntervalSince1970: self))
   }

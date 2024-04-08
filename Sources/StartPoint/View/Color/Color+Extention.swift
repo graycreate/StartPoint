@@ -164,24 +164,31 @@ public extension UIColor {
       }
     }
   
-  convenience init(_ hex: String, alpha: CGFloat = 1.0) {
-    var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-    
-    if cString.hasPrefix("#") { cString.removeFirst() }
-    
-    if cString.count != 6 {
-      self.init("ff0000") // return red color for wrong hex input
-      return
-    }
-    
-    var rgbValue: UInt64 = 0
-    Scanner(string: cString).scanHexInt64(&rgbValue)
-    
-    self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-              green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-              blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-              alpha: alpha)
+  convenience init(_ hex: String, alpha: CGFloat? = nil) {
+      var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+      if cString.hasPrefix("#") { cString.removeFirst() }
+
+      var rgbValue: UInt64 = 0
+      Scanner(string: cString).scanHexInt64(&rgbValue)
+
+      let r, g, b, a: CGFloat
+      if cString.count == 8 { // ARGB格式，包括透明度
+          a = CGFloat((rgbValue & 0xFF000000) >> 24) / 255.0
+          r = CGFloat((rgbValue & 0x00FF0000) >> 16) / 255.0
+          g = CGFloat((rgbValue & 0x0000FF00) >> 8) / 255.0
+          b = CGFloat(rgbValue & 0x000000FF) / 255.0
+      } else { // RGB格式，不包括透明度
+          r = CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0
+          g = CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0
+          b = CGFloat(rgbValue & 0x0000FF) / 255.0
+          a = alpha ?? 1.0 // 使用默认透明度值
+      }
+
+      self.init(red: r, green: g, blue: b, alpha: a)
   }
+
+
   
   func color() -> Color {
     return Color(self)
@@ -194,13 +201,14 @@ public extension UIColor {
   }
   
   var hex: String {
-    var r:CGFloat = 0
-    var g:CGFloat = 0
-    var b:CGFloat = 0
-    var a:CGFloat = 0
-    getRed(&r, green: &g, blue: &b, alpha: &a)
-    let rgb:Int = (Int)(r*255)<<16 | (Int)(g*255)<<8 | (Int)(b*255)<<0
-    return NSString(format:"#%06x", rgb) as String
+    cgColor.toHex() ?? ""
+  }
+  
+  var p3Hex: String {
+    guard let displayP3Color = self.cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil) else {
+      return ""
+    }
+    return displayP3Color.toHex() ?? ""
   }
   
 }
@@ -345,6 +353,30 @@ extension Color {
   
 }
 
+
+extension CGColor {
+  func toHex() -> String? {
+    guard let components = components else { return nil }
+    
+    if components.count == 2 {
+      let value = components[0]
+      let alpha = components[1]
+      // RGBA
+      return String(format: "#%02lX%02lX%02lX%02lX", lroundf(Float(alpha*255)), lroundf(Float(value*255)), lroundf(Float(value*255)), lroundf(Float(value*255)))
+    }
+    
+    guard components.count == 4 else { return nil }
+    
+    let red   = components[0]
+    let green = components[1]
+    let blue  = components[2]
+    let alpa  = components[3]
+    
+    let hexString = String(format: "#%02lX%02lX%02lX%02lX",lroundf(Float(alpa*255)), lroundf(Float(red*255)), lroundf(Float(green*255)), lroundf(Float(blue*255)))
+    
+    return hexString
+  }
+}
 
 
 struct Color_Previews: PreviewProvider {
