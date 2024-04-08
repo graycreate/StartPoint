@@ -89,6 +89,28 @@ public extension AppKit {
       }
   }
   
+  static var currentLanguageCode: String {
+    return Bundle.main.preferredLocalizations.first ?? ""
+  }
+  
+  static var currentLanguage: String {
+    self.localizedLanguageName(from: self.currentLanguageCode, 
+                               displayLocaleIdentifier: self.currentLanguageCode) ?? ""
+  }
+  
+  static func localizedLanguageName(from languageCode: String, displayLocaleIdentifier: String) -> String? {
+    let displayLocale = Locale(identifier: displayLocaleIdentifier)
+    switch languageCode {
+      case "zh-Hans":
+        return displayLocale.identifier == "zh-Hans" ? "简体中文" : "Simplified Chinese"
+      case "zh-Hant":
+        return displayLocale.identifier == "zh-Hant" ? "繁體中文" : "Traditional Chinese"
+      default:
+        break
+    }
+    return displayLocale.localizedString(forLanguageCode: languageCode)
+  }
+  
 }
 
 public extension String {
