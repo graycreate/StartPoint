@@ -517,3 +517,18 @@ struct StrokeModifer: ViewModifier {
         }
     }
 }
+
+
+public extension View {
+  // Convert SwiftUI view to a UIImage
+  @MainActor func asImage() -> UIImage? {
+    let renderer = ImageRenderer(content: self)
+    renderer.scale = UIScreen.main.scale
+    if let image = renderer.uiImage {
+      if let data = image.pngData(), let pngImage = UIImage(data: data) {
+        return pngImage
+      }
+    }
+    return nil
+  }
+}

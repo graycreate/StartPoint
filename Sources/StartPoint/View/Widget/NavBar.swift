@@ -28,13 +28,14 @@ public struct NavBar<LeftView, CenterView, RightView, BottomView>: View where Le
     NavbarView {
       VStack(spacing: 0) {
         ZStack {
-          HStack(alignment: .center, spacing: 0) {
+          HStack(alignment: .firstTextBaseline, spacing: 0) {
             leftView
             Spacer()
             rightView
           }
           HStack(alignment: .center, spacing: 0) {
             centerView
+              .offset(y: -4)
           }
         }
         bottomView

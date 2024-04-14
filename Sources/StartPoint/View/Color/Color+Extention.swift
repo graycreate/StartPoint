@@ -215,7 +215,10 @@ public extension UIColor {
 
 public extension String? {
   var color: Color {
-    return .hex(self ?? "#000000")
+    guard let hex = self else {
+      return .clear
+    }
+    return .hex(hex)
   }
 }
 
