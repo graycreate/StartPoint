@@ -343,3 +343,10 @@ public extension UIDevice {
         UIDevice.current.userInterfaceIdiom == .phone
     }
 }
+
+
+//public extension DefaultStringInterpolation {
+//  public mutating func appendInterpolation<T>(_ optional: T?) {
+//    appendInterpolation(String(describing: optional))
+//  }
+//}
