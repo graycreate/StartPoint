@@ -9,6 +9,7 @@
 //import Foundation
 import SwiftUI
 
+#if canImport(UIKit)
 struct VEBlur: UIViewRepresentable {
   var style: UIBlurEffect.Style = .systemMaterial
   var bg: Color = .clear
@@ -42,3 +43,4 @@ struct VEBlur: UIViewRepresentable {
 //        }
     
 }
+#endif

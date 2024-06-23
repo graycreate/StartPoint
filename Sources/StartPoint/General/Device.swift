@@ -6,7 +6,7 @@
 //  Copyright © 2021 daystill.app. All rights reserved.
 //
 
-import Foundation
+#if canImport(UIKit)
 import UIKit
 import DeviceKit
 
@@ -35,3 +35,4 @@ public extension UIWindow? {
     return radius
   }
 }
+#endif

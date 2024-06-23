@@ -5,6 +5,7 @@
 //  Created by Gray on 2022/12/17.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct BackView: View {
@@ -35,3 +36,5 @@ struct BackView_Previews: PreviewProvider {
       .debug(true)
   }
 }
+
+#endif

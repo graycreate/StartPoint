@@ -5,6 +5,7 @@
 //  Created by ghui on 2022/3/19.
 //
 
+#if canImport(UIKit)
 import Foundation
 import SwiftUI
 
@@ -36,3 +37,4 @@ public struct RootView<Content: View> : View {
   
 }
 
+#endif

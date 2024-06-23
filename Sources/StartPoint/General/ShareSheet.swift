@@ -5,6 +5,7 @@
 //  Created by Gray on 2024/3/4.
 //
 
+#if canImport(UIKit)
 import Foundation
 
 import SwiftUI
@@ -23,3 +24,5 @@ public struct ShareSheet: UIViewControllerRepresentable {
   
   public func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
+
+#endif

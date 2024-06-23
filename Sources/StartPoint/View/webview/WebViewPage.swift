@@ -1,3 +1,6 @@
+
+#if os(iOS)
+
 import SwiftUI
 
 public struct WebViewPage: View {
@@ -74,3 +77,5 @@ struct WebViewPage_Previews: PreviewProvider {
         .browse(url: "https://github.com", show: .constant(true))
     }
 }
+
+#endif

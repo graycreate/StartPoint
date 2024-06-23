@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 class RootHostingController<Content: View>: UIHostingController<Content> {
   
   override var prefersHomeIndicatorAutoHidden: Bool {
@@ -20,3 +21,5 @@ class RootHostingController<Content: View>: UIHostingController<Content> {
   }
 
 }
+
+#endif

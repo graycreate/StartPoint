@@ -5,6 +5,7 @@
 //  Created by Gray on 2024/3/19.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct ColoredToggleStyle: ToggleStyle {
@@ -65,3 +66,5 @@ public struct ColoredToggleStyle: ToggleStyle {
   .padding()
 //  .background(.ultraThickMaterial)
 }
+
+#endif

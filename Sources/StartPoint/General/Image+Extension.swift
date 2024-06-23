@@ -5,7 +5,7 @@
 //  Created by Gray on 2023/11/6.
 //
 
-import Foundation
+#if canImport(UIKit)
 import UIKit
 
 
@@ -32,3 +32,4 @@ class PhotosSaver: NSObject {
         completionHandler?(error)
     }
 }
+#endif

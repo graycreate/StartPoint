@@ -4,6 +4,7 @@
 //
 //  Created by Gray on 2024/1/24.
 //
+#if canImport(UIKit)
 
 import SwiftUI
 
@@ -41,3 +42,5 @@ public struct AppContentUnavailableView: View {
   AppContentUnavailableView()
     .background(.regularMaterial)
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 import Combine
 import WebKit
@@ -134,3 +135,4 @@ public class FullScreenWKWebView: WKWebView, WKNavigationDelegate {
   }
   
 }
+#endif

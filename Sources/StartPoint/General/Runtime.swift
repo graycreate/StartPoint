@@ -23,6 +23,7 @@ public struct Runtime {
   
 }
 
+@available(macOS 10.15, *)
 public extension View {
   var isPreview: Bool {
     Runtime.isPreview
@@ -30,6 +31,7 @@ public extension View {
 }
 
 
+@available(macOS 10.15, *)
 public extension View {
 #if os(iOS)
   func onBackground(_ f: @escaping () -> Void) -> some View {

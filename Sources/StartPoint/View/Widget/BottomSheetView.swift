@@ -4,7 +4,7 @@
 //
 //  Created by Gray on 2023/3/20.
 //
-
+#if canImport(UIKit)
 import SwiftUI
 
 public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>: View {
@@ -201,3 +201,5 @@ struct SwiftUIView_Previews: PreviewProvider {
   }
   
 }
+
+#endif

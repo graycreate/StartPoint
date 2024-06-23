@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+#if canImport(UIKit)
+@available(macOS 10.15, *)
 open class GeneralState: ObservableObject {
   public static var shared: GeneralState = GeneralState()
   public static var sample: GeneralState {
@@ -22,3 +24,4 @@ open class GeneralState: ObservableObject {
   }
   public var rootWindow: UIWindow?
 }
+#endif

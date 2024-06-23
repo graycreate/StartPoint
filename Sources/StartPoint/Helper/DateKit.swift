@@ -35,7 +35,8 @@ public extension Date {
                   of: self)
   }
   
-  var expired: Bool {
+    @available(macOS 12, *)
+    var expired: Bool {
     Date.now > self
   }
   
@@ -47,7 +48,8 @@ public extension Date {
     return Int64(Date().timeIntervalSince1970 * 1000)
   }
   
-  static var printTime: String {
+    @available(macOS 12, *)
+    static var printTime: String {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
     return dateFormatter.string(from: Date.now)

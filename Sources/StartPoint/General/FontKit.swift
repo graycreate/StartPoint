@@ -5,7 +5,7 @@
 //  Created by Gray on 2023/11/12.
 //
 
-import Foundation
+#if canImport(UIKit)
 import UIKit
 import SwiftUI
 
@@ -28,3 +28,5 @@ public extension Font.TextStyle {
     Font.system(self, design: .rounded)
   }
 }
+
+#endif

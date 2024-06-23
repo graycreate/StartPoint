@@ -6,9 +6,12 @@
 //  Copyright © 2021 daystill.app. All rights reserved.
 //
 
+
 import Foundation
 import Combine
+#if canImport(UIKit)
 import UIKit
+#endif
 import SwiftUI
 
 private let loggable: Bool = true
@@ -37,6 +40,7 @@ public func isSimulator() -> Bool {
   return false
 }
 
+#if canImport(UIKit)
 
 
 /// Publisher to read keyboard changes.
@@ -142,3 +146,4 @@ public extension Bundle {
   
 }
 
+#endif

@@ -5,9 +5,10 @@
 //  Created by ghui on 2022/2/24.
 //
 
+#if canImport(UIKit)
 import SwiftUI
-import UIKit
 import MessageUI
+import UIKit
 import DeviceKit
 
 public struct MailView: UIViewControllerRepresentable {
@@ -83,3 +84,5 @@ public struct MailView: UIViewControllerRepresentable {
   }
   
 }
+
+#endif

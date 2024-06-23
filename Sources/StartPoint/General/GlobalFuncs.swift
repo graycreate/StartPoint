@@ -5,8 +5,6 @@
 //  Created by Gray on 2024/3/5.
 //
 
-import Foundation
-import UIKit
 import SwiftUI
 
 /// duration: Millisecond to delay, defaut is 5 ms, animation if not nil, will run with animation
@@ -31,7 +29,10 @@ public func delay(_ duration: Double = 5, with animation: Animation? = nil, _ wo
   return dispatch(delay: duration, animation: animation, execute: work)
 }
 
+#if canImport(UIKit)
 public func haptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
   let impactHeavy = UIImpactFeedbackGenerator(style: style)
   impactHeavy.impactOccurred()
 }
+
+#endif

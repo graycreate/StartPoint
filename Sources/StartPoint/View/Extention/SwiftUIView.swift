@@ -4,7 +4,7 @@
 //
 //  Created by Gray on 2023/3/30.
 //
-
+#if canImport(UIKit)
 import SwiftUI
 
 
@@ -59,3 +59,4 @@ public extension View {
     .previewDisplayName("RedDotViewModifier")
 }
 
+#endif

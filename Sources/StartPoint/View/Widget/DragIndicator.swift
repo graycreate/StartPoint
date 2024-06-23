@@ -4,7 +4,7 @@
 //
 //  Created by Gray on 2022/12/22.
 //
-
+#if canImport(UIKit)
 import SwiftUI
 
 public struct DragIndicator: View {
@@ -44,3 +44,5 @@ struct SheetPageIndicator_Previews: PreviewProvider {
 //    DragIndicator(progress: 1.0)
   }
 }
+
+#endif

@@ -5,6 +5,7 @@
 //  Created by Gray on 2024/3/4.
 //
 
+#if canImport(UIKit)
 import Foundation
 import UIKit
 
@@ -119,5 +120,4 @@ public extension String {
   }
 }
 
-
-
+#endif

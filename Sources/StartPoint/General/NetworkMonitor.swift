@@ -8,6 +8,7 @@
 import Foundation
 import Network
 
+@available(macOS 10.15, *)
 public class NetworkMonitor: ObservableObject {
     private let networkMonitor = NWPathMonitor()
     private let workerQueue = DispatchQueue(label: "Monitor")

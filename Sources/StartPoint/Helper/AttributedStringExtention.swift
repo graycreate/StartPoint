@@ -5,6 +5,8 @@
 //  Created by Gray on 2024/2/6.
 //
 
+#if canImport(UIKit)
+
 import Foundation
 import SwiftUI
 
@@ -119,3 +121,5 @@ struct AttributedStringExtentionPreview: PreviewProvider {
       .foregroundStyle(.cyan)
   }
 }
+
+#endif

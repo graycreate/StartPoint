@@ -5,6 +5,7 @@
 //  Created by Gray on 2024/1/29.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct TypewriterView: View {
@@ -90,7 +91,9 @@ public struct TypewriterView: View {
         let range = animatedText.startIndex...index
         copyAttributes(range: range)
         if self.hapic {
+            #if os(iOS)
           haptic(.light)
+            #endif
         }
         // Wait
         let typingDelay: Duration = .milliseconds(80 / self.speed)
@@ -142,3 +145,5 @@ struct TypewriterViewPreview: PreviewProvider {
     }
   }
 }
+
+#endif

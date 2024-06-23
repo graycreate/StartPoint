@@ -5,6 +5,7 @@
 //  Created by Gray on 2023/3/11.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 
@@ -124,3 +125,5 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
 //    ImageLabelView()
 //  }
 //}
+
+#endif

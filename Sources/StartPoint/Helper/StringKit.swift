@@ -19,11 +19,13 @@ public extension String {
     return ""
   }
   
-  var localized: LocalizedStringKey {
+    @available(macOS 10.15, *)
+    var localized: LocalizedStringKey {
     LocalizedStringKey(self)
   }
 }
 
+@available(macOS 10.15, *)
 public extension LocalizedStringKey {
   var stringKey: String? {
     Mirror(reflecting: self).children.first(where: { $0.label == "key" })?.value as? String
@@ -43,6 +45,7 @@ public extension LocalizedStringKey {
   
 }
 
+@available(macOS 10.15, *)
 extension LocalizedStringKey: Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.stringKey)

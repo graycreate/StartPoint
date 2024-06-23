@@ -5,7 +5,7 @@
 //  Created by Gray on 2022/12/12.
 //
 
-import Foundation
+#if canImport(UIKit)
 import SwiftUI
 
 public extension Color {
@@ -401,3 +401,5 @@ struct Color_Previews: PreviewProvider {
   }
 }
 
+
+#endif

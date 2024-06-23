@@ -5,6 +5,7 @@
 //  Created by Gray on 2022/12/12.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct NavBar<LeftView, CenterView, RightView, BottomView>: View where LeftView: View, CenterView: View, RightView: View, BottomView: View {
@@ -93,3 +94,5 @@ struct NavBar_Previews: PreviewProvider {
   }
 }
 
+
+#endif

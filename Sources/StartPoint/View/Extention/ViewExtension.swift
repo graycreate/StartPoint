@@ -6,9 +6,9 @@
 //  Copyright © 2020 lessmore.io. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import Combine
-
 
 public extension UIEdgeInsets {
   var edgeInset: EdgeInsets {
@@ -532,3 +532,5 @@ public extension View {
     return nil
   }
 }
+
+#endif

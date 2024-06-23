@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 
 extension Color {
   
@@ -55,3 +56,5 @@ struct Colors_Previews: PreviewProvider {
     }
   }
 }
+
+#endif

@@ -5,9 +5,11 @@
 //  Created by Gray on 2024/3/4.
 //
 
+#if canImport(UIKit)
 import Foundation
-import UIKit
 import DeviceKit
+import UIKit
+
 import MessageUI
 
 public struct Mail {
@@ -94,3 +96,4 @@ extension Mail {
 
   
 }
+#endif

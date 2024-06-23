@@ -131,6 +131,7 @@ public extension String {
     }
 
 
+    @available(macOS 12, *)
     var attributedString: AttributedString {
         do {
             let attributedString = try AttributedString(markdown: self, options:
@@ -171,6 +172,7 @@ public extension Optional where Wrapped == String {
     }
 }
 
+@available(macOS 10.15, *)
 public extension Binding {
     var raw: Value {
         return self.wrappedValue
@@ -261,6 +263,7 @@ public extension Data {
     }
 }
 
+#if canImport(UIKit)
 public extension UIFont {
     static func prfered(_ font: Font) -> UIFont {
         let uiFont: UIFont
@@ -295,7 +298,7 @@ public extension UIFont {
         return uiFont
     }
 }
-
+#endif
 
 public extension Bundle {
     static func readString(name: String?, type: String?) -> String? {
@@ -303,14 +306,10 @@ public extension Bundle {
         if let filepath = Bundle.main.path(forResource: name, ofType: type) {
             do {
                 result = try String(contentsOfFile: filepath)
-                log("----------> local resource: \(result) <------------")
             } catch {
                 // contents could not be loaded
             }
-        } else {
-            // example.txt not found!
-            log("----------> local resource \(name): not found <------------")
-        }
+        } 
         return result
     }
 
@@ -334,6 +333,7 @@ public extension URL {
     }
 }
 
+#if canImport(UIKit)
 public extension UIDevice {
     static var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -343,6 +343,7 @@ public extension UIDevice {
         UIDevice.current.userInterfaceIdiom == .phone
     }
 }
+#endif
 
 
 //public extension DefaultStringInterpolation {
