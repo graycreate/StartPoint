@@ -110,6 +110,19 @@ public extension AppKit {
     }
     return displayLocale.localizedString(forLanguageCode: languageCode)
   }
+    
+    static func openCalendarApp() {
+        // 定义日历应用程序的 URL scheme
+        let calendarURL = URL(string: "calshow://")!
+        
+        // 检查设备是否能打开这个 URL
+        if UIApplication.shared.canOpenURL(calendarURL) {
+            // 打开日历应用程序
+            UIApplication.shared.open(calendarURL, options: [:], completionHandler: nil)
+        } else {
+            print("无法打开日历应用程序")
+        }
+    }
   
 }
 
