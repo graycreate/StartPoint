@@ -64,7 +64,7 @@ public extension AttributedString {
         attrStr.runs.forEach { run in
             attrStr[run.range].strikethroughStyle = active ? .single : nil
             if let color = color {
-              attrStr[run.range].strikethroughColor = color.uiColor
+              attrStr[run.range].strikethroughColor = color.platformColor
             }
         }
         return attrStr

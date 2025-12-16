@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 public struct BottomSheetView<TitleView: View, Content: View, AnchorView: View>: View {
   @Binding var isShowing: Bool
   var titleView: TitleView
@@ -189,7 +190,7 @@ private struct SheetTitle: View {
 
 struct SwiftUIView_Previews: PreviewProvider {
   @State static var isShowing = true
-  
+
   static var previews: some View {
     Text("Title")
       .bottomSheet(isShowing: $isShowing, title: "Test") {
@@ -199,5 +200,6 @@ struct SwiftUIView_Previews: PreviewProvider {
           .background(.white)
       }
   }
-  
+
 }
+#endif

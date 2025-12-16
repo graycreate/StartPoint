@@ -71,7 +71,9 @@ public struct NavbarView<Content: View>: View {
     .frame(minHeight: 50)
     .forceClickable()
     .visualBlur()
+    #if os(iOS)
     .navigationBarHidden(true)
+    #endif
     .ignoresSafeArea(.container)
   }
 }

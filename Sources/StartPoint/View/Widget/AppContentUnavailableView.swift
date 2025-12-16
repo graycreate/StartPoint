@@ -12,7 +12,7 @@ public struct AppContentUnavailableView: View {
   public init() {}
   
   public var body: some View {
-    if #available(iOS 17.0, *) {
+    if #available(iOS 17.0, macOS 14.0, *) {
       ContentUnavailableView(
         "No Internet Connection",
         systemImage: "wifi.exclamationmark",
