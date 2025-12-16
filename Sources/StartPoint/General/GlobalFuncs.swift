@@ -38,14 +38,4 @@ public func haptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
   let impactHeavy = UIImpactFeedbackGenerator(style: style)
   impactHeavy.impactOccurred()
 }
-#elseif os(macOS)
-/// Haptic feedback types for cross-platform compatibility
-public enum HapticFeedbackStyle {
-  case light, medium, heavy, soft, rigid
-}
-
-/// No-op haptic function for macOS
-public func haptic(_ style: HapticFeedbackStyle = .light) {
-  // No haptic feedback on macOS
-}
 #endif
