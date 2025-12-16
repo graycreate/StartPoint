@@ -1,13 +1,13 @@
 //
 //  ImageLabelView.swift
-//  
+//
 //
 //  Created by Gray on 2023/3/11.
 //
 
 import SwiftUI
 
-
+#if os(iOS)
 @available(iOS 17.0, *)
 public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   var systemName: String = ""
@@ -18,9 +18,9 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
   var badgeView: BadgeView?
   var type: SectionItemType
   var radius: CGFloat = 22
-  
+
   private let strokeSize = 1.0
-  
+
   public init(systemName: String = "",
        title: LocalizedStringKey = "",
        values: [String] = [],
@@ -39,15 +39,15 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
     self.rightView = rightView()
     self.badgeView = badgeView()
   }
-  
+
   var multiValue: Bool {
     values.count > 1
   }
-  
+
   var valueColor: Color {
     .labelColor.opacity(0.5)
   }
-  
+
   public var body: some View {
     HStack {
       if systemName.notEmpty() {
@@ -100,7 +100,7 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
       }
     }
   }
-  
+
   var corners: UIRectCorner {
     switch self.type {
       case .single: return .allCorners
@@ -109,14 +109,15 @@ public struct ImageLabelView<BadgeView: View, RightView: View>: View {
       case .bottom: return [.bottomLeft, .bottomRight]
     }
   }
-  
+
   fileprivate let cardBGColor = Color.white.night(.hex(0x2a2a2b))
-  
+
   public enum SectionItemType {
     case top, middle, bottom, single
   }
-  
+
 }
+#endif
 
 
 //#Preview {

@@ -6,20 +6,25 @@
 //
 
 import Foundation
+#if os(iOS)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 public struct AppKit {}
 
 public extension AppKit {
-  
+
+#if os(iOS)
   static func openSetting() {
     UIApplication.openSettingsURLString.openURL()
   }
-  
+
   static func openTwitterUserProfile(username: String) {
     let appURL = URL(string: "twitter://user?screen_name=\(username)")!
     let webURL = URL(string: "https://twitter.com/\(username)")!
-    
+
     if UIApplication.shared.canOpenURL(appURL) {
       // If Twitter app is installed, open URL in Twitter app
       UIApplication.shared.open(appURL)
@@ -28,50 +33,52 @@ public extension AppKit {
       UIApplication.shared.open(webURL)
     }
   }
-  
+#endif
+
   //  openAppStoreReviewPage
   static func openAppStoreReviewPage(appID: String) {
     let url = appStoreAppPageUrl(appID: appID) + "?action=write-review"
     url.openURL()
   }
-  
+
   static func openAppStorePage(appID: String) {
     appStoreAppPageUrl(appID: appID).openURL()
   }
-  
+
   static func appStoreAppPageUrl(appID: String)-> String {
     "https://apps.apple.com/app/id\(appID)"
   }
-  
-  
+
+
   static var name: String {
     if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String {
       return appName
     }
-    
+
     if let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String {
       return appName
     }
-    
+
     return ""
   }
-  
+
+#if os(iOS)
   static func getAppIcons(defaultIconName: String = "AppIcon") -> [String] {
       var iconNames: [String] = [defaultIconName]
-      
+
       // 访问 Info.plist 中关于替代图标的配置
       if let iconsDictionary = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: AnyObject],
          let alternateIconsDictionary = iconsDictionary["CFBundleAlternateIcons"] as? [String: AnyObject] {
-          
+
           for (iconName, _) in alternateIconsDictionary {
               // 将图标名称添加到数组中
               iconNames.append(iconName)
           }
       }
-    
+
     return iconNames.sorted()
   }
-  
+
   static func setAppIcon(_ iconName: String) {
       // 如果是默认图标，传入 nil
       if iconName == "AppIcon" {
@@ -80,7 +87,7 @@ public extension AppKit {
           UIApplication.shared.setAlternateIconName(iconName)
       }
   }
-  
+
   static func getCurrentAppIconName() -> String {
       if let currentIconName = UIApplication.shared.alternateIconName {
           return currentIconName
@@ -88,16 +95,17 @@ public extension AppKit {
           return "AppIcon"
       }
   }
-  
+#endif
+
   static var currentLanguageCode: String {
     return Bundle.main.preferredLocalizations.first ?? ""
   }
-  
+
   static var currentLanguage: String {
-    self.localizedLanguageName(from: self.currentLanguageCode, 
+    self.localizedLanguageName(from: self.currentLanguageCode,
                                displayLocaleIdentifier: self.currentLanguageCode) ?? ""
   }
-  
+
   static func localizedLanguageName(from languageCode: String, displayLocaleIdentifier: String) -> String? {
     let displayLocale = Locale(identifier: displayLocaleIdentifier)
     switch languageCode {
@@ -110,11 +118,12 @@ public extension AppKit {
     }
     return displayLocale.localizedString(forLanguageCode: languageCode)
   }
-    
+
+#if os(iOS)
     static func openCalendarApp() {
         // 定义日历应用程序的 URL scheme
         let calendarURL = URL(string: "calshow://")!
-        
+
         // 检查设备是否能打开这个 URL
         if UIApplication.shared.canOpenURL(calendarURL) {
             // 打开日历应用程序
@@ -123,7 +132,8 @@ public extension AppKit {
             print("无法打开日历应用程序")
         }
     }
-  
+#endif
+
 }
 
 public extension String {
@@ -131,6 +141,3 @@ public extension String {
     URL(string: self)
   }
 }
-
-
-

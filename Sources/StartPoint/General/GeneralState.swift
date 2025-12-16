@@ -7,6 +7,11 @@
 
 import Foundation
 import SwiftUI
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 open class GeneralState: ObservableObject {
   public static var shared: GeneralState = GeneralState()
@@ -14,11 +19,16 @@ open class GeneralState: ObservableObject {
     shared
   }
   @Published public var autoHideIndicator: Bool = false
+#if os(iOS)
   @Published public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
-  
+
   /// Root UI elements
   public var rootViewController: UIViewController? {
     return rootWindow?.rootViewController
   }
   public var rootWindow: UIWindow?
+#else
+  @Published public var safeArea: EdgeInsets = EdgeInsets()
+  public var rootWindow: NSWindow?
+#endif
 }

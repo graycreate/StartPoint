@@ -8,14 +8,14 @@
 import SwiftUI
 
 public struct BackView: View {
-  var color: Color = UIColor.label.color()
+  var color: Color = Color.labelColor
   @Environment(\.dismiss) var dismiss
   var onBackPressed: (()->Void)?
-  
+
   public init(onBackPressed: ( () -> Void)? = nil) {
     self.onBackPressed = onBackPressed
   }
-  
+
   public var body: some View {
     Button {
       onBackPressed?()

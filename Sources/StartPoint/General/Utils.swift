@@ -8,7 +8,11 @@
 
 import Foundation
 import Combine
+#if os(iOS)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 import SwiftUI
 
 private let loggable: Bool = true
@@ -38,7 +42,7 @@ public func isSimulator() -> Bool {
 }
 
 
-
+#if os(iOS)
 /// Publisher to read keyboard changes.
 protocol KeyboardReadable {
   var keyboardPublisher: AnyPublisher<Bool, Never> { get }
@@ -50,7 +54,7 @@ extension KeyboardReadable {
       NotificationCenter.default
         .publisher(for: UIResponder.keyboardWillShowNotification)
         .map { _ in true },
-      
+
       NotificationCenter.default
         .publisher(for: UIResponder.keyboardWillHideNotification)
         .map { _ in false }
@@ -58,6 +62,7 @@ extension KeyboardReadable {
     .eraseToAnyPublisher()
   }
 }
+#endif
 
 public func notEmpty(_ strs: String?...) -> Bool {
   for str in strs {
@@ -72,9 +77,13 @@ extension URL {
   init?(_ url: String) {
     self.init(string: url)
   }
-  
+
   public func start() {
+#if os(iOS)
     UIApplication.shared.openURL(self)
+#elseif os(macOS)
+    NSWorkspace.shared.open(self)
+#endif
   }
 }
 
@@ -85,18 +94,19 @@ extension String {
   }
 }
 
+#if os(iOS)
 struct MailHelper {
-  
+
   static public func createEmailUrl(subject: String, body: String, to: String) -> URL? {
     let subjectEncoded = subject.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
     let bodyEncoded = body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
-    
+
     let gmailUrl = URL(string: "googlegmail://co?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
     let outlookUrl = URL(string: "ms-outlook://compose?to=\(to)&subject=\(subjectEncoded)")
     let yahooMail = URL(string: "ymail://mail/compose?to=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
     let sparkUrl = URL(string: "readdle-spark://compose?recipient=\(to)&subject=\(subjectEncoded)&body=\(bodyEncoded)")
     let defaultUrl = URL(string: "mailto:\(to)?subject=\(subjectEncoded)&body=\(bodyEncoded)")
-    
+
     if let gmailUrl = gmailUrl, UIApplication.shared.canOpenURL(gmailUrl) {
       return gmailUrl
     } else if let outlookUrl = outlookUrl, UIApplication.shared.canOpenURL(outlookUrl) {
@@ -106,14 +116,15 @@ struct MailHelper {
     } else if let sparkUrl = sparkUrl, UIApplication.shared.canOpenURL(sparkUrl) {
       return sparkUrl
     }
-    
+
     return defaultUrl
   }
-  
+
 }
+#endif
 
 public extension Bundle {
-  
+
   var shortVersion: String {
     if let result = infoDictionary?["CFBundleShortVersionString"] as? String {
       return result
@@ -122,7 +133,7 @@ public extension Bundle {
       return ""
     }
   }
-  
+
   var buildVersion: String {
     if let result = infoDictionary?["CFBundleVersion"] as? String {
       return result
@@ -131,14 +142,13 @@ public extension Bundle {
       return ""
     }
   }
-  
+
   var fullVersion: String {
     return "\(shortVersion) (\(buildVersion))"
   }
-  
+
    static func bundleID() -> String {
     Bundle.main.bundleIdentifier!
   }
-  
-}
 
+}

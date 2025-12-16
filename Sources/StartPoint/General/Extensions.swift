@@ -1,5 +1,10 @@
 import Foundation
 import SwiftUI
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 public extension Character {
     var string: String {
@@ -14,7 +19,7 @@ public extension Int {
 }
 
 public extension Array where Element: Equatable {
-  
+
   mutating func removeEqualItems(_ item: Element) {
     self = self.filter { (currentItem: Element) -> Bool in
       return currentItem != item
@@ -30,7 +35,7 @@ public extension Array where Element: Equatable {
     }
     self.remove(at: index)
   }
-  
+
   mutating func appendOrRemove(_ item: Element) {
     if self.contains(item) {
       self.removeFirstEqualItem(item)
@@ -38,7 +43,7 @@ public extension Array where Element: Equatable {
       self.append(item)
     }
   }
-  
+
 }
 
 public extension Set where Element: Equatable {
@@ -49,16 +54,16 @@ public extension Set where Element: Equatable {
       self.insert(item)
     }
   }
-  
+
   mutating func append(_ item: Element) {
     guard !self.contains(item) else { return }
     self.insert(item)
   }
-  
+
 //  mutating func update(_ item: Element) {
 //    self.append(item)
 //  }
-  
+
 }
 
 public extension String {
@@ -261,6 +266,7 @@ public extension Data {
     }
 }
 
+#if os(iOS)
 public extension UIFont {
     static func prfered(_ font: Font) -> UIFont {
         let uiFont: UIFont
@@ -295,6 +301,7 @@ public extension UIFont {
         return uiFont
     }
 }
+#endif
 
 
 public extension Bundle {
@@ -334,6 +341,7 @@ public extension URL {
     }
 }
 
+#if os(iOS)
 public extension UIDevice {
     static var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -343,6 +351,7 @@ public extension UIDevice {
         UIDevice.current.userInterfaceIdiom == .phone
     }
 }
+#endif
 
 
 //public extension DefaultStringInterpolation {

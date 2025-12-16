@@ -11,6 +11,9 @@ import SwiftUI
 
 public struct DeviceState {
   public var autoHideIndicator: Bool = true
+#if os(iOS)
   public var safeArea: EdgeInsets = UIDevice.safeArea.edgeInset
+#else
+  public var safeArea: EdgeInsets = EdgeInsets()
+#endif
 }
-

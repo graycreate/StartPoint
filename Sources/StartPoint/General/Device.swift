@@ -7,12 +7,13 @@
 //
 
 import Foundation
+#if os(iOS)
 import UIKit
 import DeviceKit
 
 
 public extension UIDevice {
-  
+
   static var safeArea: UIEdgeInsets {
     var result: UIEdgeInsets
     let isIPhoneMini = Device.current == .iPhone12Mini
@@ -22,7 +23,7 @@ public extension UIDevice {
                                bottom: defaultInsetBottom, right: 0)
     return result;
   }
-  
+
 }
 
 public extension UIWindow? {
@@ -35,3 +36,4 @@ public extension UIWindow? {
     return radius
   }
 }
+#endif

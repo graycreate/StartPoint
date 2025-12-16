@@ -1,6 +1,11 @@
 import SwiftUI
 import Combine
 import WebKit
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 @dynamicMemberLookup
 public class WebViewStore: ObservableObject {
@@ -9,14 +14,16 @@ public class WebViewStore: ObservableObject {
       setupObservers()
     }
   }
-  
+
   public init(webView: FullScreenWKWebView = FullScreenWKWebView()) {
     self.webView = webView
+#if os(iOS)
     self.webView.isOpaque = false
+#endif
     self.webView.navigationDelegate = webView
     setupObservers()
   }
-  
+
   private func setupObservers() {
     func subscriber<Value>(for keyPath: KeyPath<FullScreenWKWebView, Value>) -> NSKeyValueObservation {
       return webView.observe(keyPath, options: [.prior]) { _, change in
@@ -54,9 +61,9 @@ public class WebViewStore: ObservableObject {
     }
 #endif
   }
-  
+
   private var observers: [NSKeyValueObservation] = []
-  
+
   public subscript<T>(dynamicMember keyPath: KeyPath<WKWebView, T>) -> T {
     webView[keyPath: keyPath]
   }
@@ -68,15 +75,15 @@ public class WebViewStore: ObservableObject {
 public struct WebView: View, UIViewRepresentable {
   /// The WKWebView to display
   public let webView: WKWebView
-  
+
   public init(webView: WKWebView) {
     self.webView = webView
   }
-  
+
   public func makeUIView(context: UIViewRepresentableContext<WebView>) -> WKWebView {
     webView
   }
-  
+
   public func updateUIView(_ uiView: WKWebView, context: UIViewRepresentableContext<WebView>) {
   }
 }
@@ -87,15 +94,15 @@ public struct WebView: View, UIViewRepresentable {
 public struct WebView: View, NSViewRepresentable {
   /// The WKWebView to display
   public let webView: WKWebView
-  
+
   public init(webView: WKWebView) {
     self.webView = webView
   }
-  
+
   public func makeNSView(context: NSViewRepresentableContext<WebView>) -> WKWebView {
     webView
   }
-  
+
   public func updateNSView(_ uiView: WKWebView, context: NSViewRepresentableContext<WebView>) {
   }
 }
@@ -103,11 +110,13 @@ public struct WebView: View, NSViewRepresentable {
 
 public class FullScreenWKWebView: WKWebView, WKNavigationDelegate {
   public var mailToClicked: ((String) -> Void)?
-  
+
+#if os(iOS)
   public override var safeAreaInsets: UIEdgeInsets {
     return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
   }
-  
+#endif
+
   public func webView(_ webView: WKWebView,
                       decidePolicyFor navigationAction: WKNavigationAction,
                       decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -115,22 +124,27 @@ public class FullScreenWKWebView: WKWebView, WKNavigationDelegate {
       decisionHandler(.allow)
       return
     }
-    
+
     if url.scheme == "mailto" {
       if let mailToClicked = self.mailToClicked {
         mailToClicked(url.absoluteString)
         decisionHandler(.cancel)
         return
       }
+#if os(iOS)
       if UIApplication.shared.canOpenURL(url) {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
         decisionHandler(.cancel)
       } else {
         decisionHandler(.allow)
       }
+#elseif os(macOS)
+      NSWorkspace.shared.open(url)
+      decisionHandler(.cancel)
+#endif
     } else {
       decisionHandler(.allow)
     }
   }
-  
+
 }

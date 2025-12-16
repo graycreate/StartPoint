@@ -7,8 +7,7 @@ let package = Package(
     name: "StartPoint",
     platforms: [
         .iOS(.v17),
-//        .macCatalyst(.v13),
-//        .macOS(.v10_15)
+        .macOS(.v13)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -23,7 +22,7 @@ let package = Package(
         .target(
             name: "StartPoint",
             dependencies: [
-                .product(name: "DeviceKit", package: "DeviceKit")
+                .product(name: "DeviceKit", package: "DeviceKit", condition: .when(platforms: [.iOS]))
             ]),
         .testTarget(
             name: "StartPointTests",

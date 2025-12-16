@@ -89,9 +89,11 @@ public struct TypewriterView: View {
         // Update the style
         let range = animatedText.startIndex...index
         copyAttributes(range: range)
+        #if os(iOS)
         if self.hapic {
           haptic(.light)
         }
+        #endif
         // Wait
         let typingDelay: Duration = .milliseconds(80 / self.speed)
         try await Task.sleep(for: typingDelay)

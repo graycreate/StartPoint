@@ -8,13 +8,19 @@
 
 import SwiftUI
 import Combine
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
-
+#if os(iOS)
 public extension UIEdgeInsets {
   var edgeInset: EdgeInsets {
     return EdgeInsets(top: self.top, leading: self.left, bottom: self.bottom, trailing: self.right)
   }
 }
+#endif
 
 public extension View {
   public func debug(_ force: Bool = true, _ color: Color = .green) -> some View {
@@ -31,7 +37,7 @@ struct DebugModifier: ViewModifier {
     self.force = force
     self.color = color
   }
-  
+
   func body(content: Content) -> some View {
 #if DEBUG
     if !isSimulator() && !force {
@@ -58,23 +64,26 @@ struct NavigationViewModifier: ViewModifier {
       content
     }
     .ignoresSafeArea(.container)
+#if os(iOS)
     .navigationBarHidden(true)
+#endif
   }
 }
 
+#if os(iOS)
 struct RoundedEdgeModifier: ViewModifier {
   var width: CGFloat = 2
   var color: Color = .black
   var cornerRadius: CGFloat = 16.0
   var corners: UIRectCorner
-  
+
   init(radius: CGFloat, corners: UIRectCorner, width: CGFloat, color: Color) {
     self.cornerRadius = radius
     self.width = width
     self.color = color
     self.corners = corners
   }
-  
+
   func body(content: Content) -> some View {
     if cornerRadius == -1 {
       content
@@ -101,7 +110,7 @@ extension UINavigationController: UIGestureRecognizerDelegate {
     super.viewDidLoad()
     interactivePopGestureRecognizer?.delegate = self
   }
-  
+
   public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
     return viewControllers.count > 1
   }
@@ -110,7 +119,7 @@ extension UINavigationController: UIGestureRecognizerDelegate {
 
 struct KeyboardResponsiveModifier: ViewModifier {
   @State private var offset: CGFloat = 0
-  
+
   func body(content: Content) -> some View {
     content
       .padding(.bottom, offset)
@@ -123,7 +132,7 @@ struct KeyboardResponsiveModifier: ViewModifier {
             self.offset = height - (bottomInset)
           }
         }
-        
+
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { notif in
           withAnimation {
             self.offset = 0
@@ -138,6 +147,7 @@ extension View {
     return modifier(KeyboardResponsiveModifier())
   }
 }
+#endif
 
 
 
@@ -146,15 +156,46 @@ struct SizePreferenceKey: PreferenceKey {
   static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }
 
+#if os(iOS)
 struct ClipCornerShape: Shape {
   var radius: CGFloat = .infinity
   var corners: UIRectCorner = .allCorners
-  
+
   func path(in rect: CGRect) -> Path {
     let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
     return Path(path.cgPath)
   }
 }
+#else
+struct ClipCornerShape: Shape {
+  var radius: CGFloat = .infinity
+
+  func path(in rect: CGRect) -> Path {
+    let path = NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
+    return Path(path.cgPath)
+  }
+}
+
+extension NSBezierPath {
+  var cgPath: CGPath {
+    let path = CGMutablePath()
+    var points = [CGPoint](repeating: .zero, count: 3)
+    for i in 0 ..< elementCount {
+      let type = element(at: i, associatedPoints: &points)
+      switch type {
+      case .moveTo: path.move(to: points[0])
+      case .lineTo: path.addLine(to: points[0])
+      case .curveTo: path.addCurve(to: points[2], control1: points[0], control2: points[1])
+      case .closePath: path.closeSubpath()
+      case .cubicCurveTo: path.addCurve(to: points[2], control1: points[0], control2: points[1])
+      case .quadraticCurveTo: path.addQuadCurve(to: points[1], control: points[0])
+      @unknown default: break
+      }
+    }
+    return path
+  }
+}
+#endif
 
 public extension View {
   func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
@@ -166,27 +207,34 @@ public extension View {
     }
     .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
   }
-  
+
   func greedyWidth(_ alignment: Alignment = .center) -> some View {
     frame(maxWidth: .infinity, alignment: alignment)
   }
-  
+
   func greedyHeight(_ alignment: Alignment = .center) -> some View {
     frame(maxHeight: .infinity, alignment: alignment)
   }
-  
+
   func greedyFrame(_ alignment: Alignment = .center) -> some View {
     frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
   }
-  
-  public func visualBlur(style: UIBlurEffect.Style = .systemMaterial, color: Color = .clear, alpha: CGFloat = 1.0) -> some View {
+
+#if os(iOS)
+  func visualBlur(style: UIBlurEffect.Style = .systemMaterial, color: Color = .clear, alpha: CGFloat = 1.0) -> some View {
     return self.background(VEBlur(style: style, bg: color, alpha: alpha))
   }
-  
+#else
+  func visualBlur(style: NSVisualEffectView.Material = .hudWindow, color: Color = .clear, alpha: CGFloat = 1.0) -> some View {
+    return self.background(VEBlur(style: style, bg: color, alpha: alpha))
+  }
+#endif
+
   func forceClickable() -> some View {
     return self.background(Color.almostClear)
   }
-  
+
+#if os(iOS)
   func clip(radius: CGFloat = -1,
                    corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight],
                    strokeSize: CGFloat = 1,
@@ -195,11 +243,16 @@ public extension View {
     self.modifier(RoundedEdgeModifier(radius: radius, corners: corners,
                                       width: strokeSize, color: strokeColor))
   }
-  
+
   func clipCorner(_ radius: CGFloat, corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight]) -> some View {
     clipShape(ClipCornerShape(radius: radius, corners: corners) )
   }
-  
+#else
+  func clipCorner(_ radius: CGFloat) -> some View {
+    clipShape(ClipCornerShape(radius: radius))
+  }
+#endif
+
   func hide(_ hide: Bool = true) -> some View {
     self.opacity(hide ? 0.0 : 1.0)
     //        return self.modifier(HideModifier(hide: hide, keepLayout: keepLayout))
@@ -207,7 +260,7 @@ public extension View {
   func remove(_ remove: Bool = true) -> some View{
     self.modifier(HideModifier(remove: remove))
   }
-  
+
   func divider(_ opacity: CGFloat = 1.0) -> some View {
     self.modifier(DividerModifier(opacity: opacity))
   }
@@ -215,7 +268,7 @@ public extension View {
 
 struct HideModifier: ViewModifier {
   let remove: Bool
-  
+
   @ViewBuilder
   func body(content: Content) -> some View {
     if !remove {
@@ -226,7 +279,7 @@ struct HideModifier: ViewModifier {
 
 struct DividerModifier: ViewModifier {
   let opacity: CGFloat
-  
+
   func body(content: Content) -> some View {
     VStack(spacing: 0) {
       content
@@ -260,8 +313,8 @@ public extension View {
       }
     }
   }
-  
-  
+
+
   //  func hapticOnTap(style: UIImpactFeedbackGenerator.FeedbackStyle = .light) -> some View {
   //    self.onTapGesture {
   //      let impact = UIImpactFeedbackGenerator(style: style)
@@ -290,7 +343,7 @@ struct NavigationLinkModifider<Destination: View>: ViewModifier {
   var `if`: Binding<Bool>?
   let action: (()->Void)?
   let destination: Destination
-  
+
   func body(content: Content) -> some View {
     Group {
       if `if` == nil {
@@ -308,11 +361,11 @@ struct NavigationLinkModifider<Destination: View>: ViewModifier {
     .simultaneousGesture(TapGesture().onEnded {
       self.action?()
     })
-    
+
   }
 }
 
-
+#if os(iOS)
 public extension View {
   func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
     self.background(HostingWindowFinder(callback: callback))
@@ -321,7 +374,7 @@ public extension View {
 
 struct HostingWindowFinder: UIViewRepresentable {
   var callback: (UIWindow?) -> ()
-  
+
   func makeUIView(context: Context) -> UIView {
     let view = UIView()
     DispatchQueue.main.async { [weak view] in
@@ -329,14 +382,15 @@ struct HostingWindowFinder: UIViewRepresentable {
     }
     return view
   }
-  
+
   func updateUIView(_ uiView: UIView, context: Context) {
   }
 }
+#endif
 
 
 public extension View {
-  
+
   func colorful(
     colors: [Color] = [.titleGradStartColor, .titleGradEndColor],
     startPoint: UnitPoint = .leading,
@@ -356,7 +410,7 @@ struct ViewBorderModifier: ViewModifier {
   var color: Color
   var radius: CGFloat
   var hide: Bool
-  
+
   func body(content: Content) -> some View {
     if hide {
       content
@@ -378,7 +432,7 @@ public extension View {
     //    return self
     return self.modifier(ViewBorderModifier(color: color, radius: radius, hide: hide))
   }
-  
+
 }
 
 extension Text {
@@ -387,6 +441,7 @@ extension Text {
   }
 }
 
+#if os(iOS)
 extension UIApplication {
   var currentScene: UIWindowScene? {
     connectedScenes
@@ -397,7 +452,7 @@ extension UIApplication {
 
 struct AdaptsToKeyboard: ViewModifier {
   @State var currentHeight: CGFloat = 0
-  
+
   func body(content: Content) -> some View {
     GeometryReader { geometry in
       content
@@ -414,7 +469,7 @@ struct AdaptsToKeyboard: ViewModifier {
               rect.height - geometry.safeAreaInsets.bottom
             }
             .subscribe(Subscribers.Assign(object: self, keyPath: \.currentHeight))
-          
+
           NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillHideNotification)
             .compactMap { notification in
               CGFloat.zero
@@ -430,6 +485,7 @@ public extension View {
     return modifier(AdaptsToKeyboard())
   }
 }
+#endif
 
 
 // @available(iOS 13.4, *) - needed for iOS
@@ -437,13 +493,13 @@ struct Draggable<Preview: View>: ViewModifier {
   let condition: Bool
   let data: () -> NSItemProvider
   let preview: Preview
-  
+
   init(condition: Bool, data: @escaping () -> NSItemProvider, preview: Preview) {
     self.condition = condition
     self.data = data
     self.preview = preview
   }
-  
+
   @ViewBuilder
   func body(content: Content) -> some View {
     if condition {
@@ -518,7 +574,7 @@ struct StrokeModifer: ViewModifier {
     }
 }
 
-
+#if os(iOS)
 public extension View {
   // Convert SwiftUI view to a UIImage
   @MainActor func asImage() -> UIImage? {
@@ -532,3 +588,13 @@ public extension View {
     return nil
   }
 }
+#elseif os(macOS)
+public extension View {
+  // Convert SwiftUI view to a NSImage
+  @MainActor func asImage() -> NSImage? {
+    let renderer = ImageRenderer(content: self)
+    renderer.scale = NSScreen.main?.backingScaleFactor ?? 2.0
+    return renderer.nsImage
+  }
+}
+#endif

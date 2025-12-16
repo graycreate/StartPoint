@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#if os(iOS)
 import UIKit
 
 
@@ -23,7 +24,7 @@ class PhotosSaver: NSObject {
     init(completionHandler: @escaping (Error?) -> Void) {
         self.completionHandler = completionHandler
     }
-    
+
     func writeToPhotoAlbum(image: UIImage) {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveError), nil)
     }
@@ -32,3 +33,4 @@ class PhotosSaver: NSObject {
         completionHandler?(error)
     }
 }
+#endif
